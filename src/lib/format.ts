@@ -20,13 +20,35 @@ export function formatPrice(
   }).format(price);
 }
 
-/** Whole-van price for a trip: km × rate, plus a daily charge when it lasts more than one day. */
-export function tripPrice(distanceKm: number, days = 1): number {
-  const { perKm, perDayMultiDay } = site.pricing;
-  return distanceKm * perKm + (days > 1 ? days * perDayMultiDay : 0);
+/** LKR → USD at the site rate, rounded to the nearest roundUsdTo dollars. */
+export function toUsd(lkr: number): number {
+  const { lkrPerUsd, roundUsdTo } = site.pricing;
+  return Math.max(
+    roundUsdTo,
+    Math.round(lkr / lkrPerUsd / roundUsdTo) * roundUsdTo,
+  );
 }
 
-/** Display price for a route: calculated from its distance, or its fixed text (e.g. a rate). */
+/** Whole-van price for a trip in USD: (km × rate, plus a daily charge on multi-day trips) in LKR, converted. */
+export function tripPrice(distanceKm: number, days = 1): number {
+  const { perKm, perDayMultiDay } = site.pricing;
+  return toUsd(distanceKm * perKm + (days > 1 ? days * perDayMultiDay : 0));
+}
+
+/** The pricing rule as a rate, e.g. "$18/day + $0.45/km" (for open-ended trips like the island loop). */
+export function rateText(): string {
+  const { perKm, perDayMultiDay, lkrPerUsd } = site.pricing;
+  const fmt = (n: number, digits: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: site.currency,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    }).format(n);
+  return `${fmt(Math.round(perDayMultiDay / lkrPerUsd), 0)}/day + ${fmt(perKm / lkrPerUsd, 2)}/km`;
+}
+
+/** Display price for a route: calculated from its distance, a fixed price, or the rate. */
 export function routePrice(route: {
   distanceKm?: number | undefined;
   days?: number | undefined;
@@ -34,7 +56,8 @@ export function routePrice(route: {
 }): string {
   if (route.distanceKm !== undefined)
     return formatPrice(tripPrice(route.distanceKm, route.days));
-  return formatPrice(route.priceFrom ?? "");
+  if (route.priceFrom !== undefined) return formatPrice(route.priceFrom);
+  return rateText();
 }
 
 /** "mailto:" link, or undefined while the email is still a placeholder. */

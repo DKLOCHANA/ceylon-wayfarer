@@ -3,7 +3,6 @@ title: The island loop
 code: ISLAND LOOP
 tag: MULTI-DAY TOUR
 duration: "[X] DAYS"
-priceFrom: "LKR 6,000 + 150/km"  # keep in sync with site.pricing
 priceLabel: PER DAY
 image: ../../assets/images/beach.jpg
 imageAlt: Turquoise sea and rocky shore at Mirissa

@@ -52,16 +52,20 @@ export const site = {
   payment:
     "You can pay in US dollars, euros or Sri Lankan rupees. Airport transfers need no deposit: you pay on the day. For multi-day trips, a 20% advance confirms your booking, and you pay the rest when you arrive in Sri Lanka.",
 
-  /** Currency for every price on the site. */
-  currency: "LKR",
+  /** Currency prices are shown in. */
+  currency: "USD",
 
   /**
-   * Price rule (whole van): distance × perKm, plus perDay × days on multi-day trips.
-   * Every route and itinerary price is calculated from these two numbers.
+   * Price rule (whole van), in Sri Lankan rupees: distance × perKm, plus perDay × days on
+   * multi-day trips. Every price is calculated from these, then shown in USD.
    */
   pricing: {
     perKm: 150,
     perDayMultiDay: 6000,
+    /** Exchange rate used for display. Update when the rupee moves (check cbsl.gov.lk). */
+    lkrPerUsd: 330,
+    /** Trip prices are rounded to the nearest this many dollars. */
+    roundUsdTo: 5,
   },
 
   socials: [
