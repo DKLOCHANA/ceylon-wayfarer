@@ -1,0 +1,161 @@
+---
+import type { ImageMetadata } from "astro";
+import { Picture } from "astro:assets";
+import { enterStep } from "@/lib/motion";
+import Chip from "@/components/ui/Chip.astro";
+import HeroVideo from "@/components/ui/HeroVideo.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Icon from "@/components/ui/Icon.astro";
+import Ticket from "@/components/ui/Ticket.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+export interface HeroTicket {
+  label: string;
+  labelRight: string;
+  fromLabel: string;
+  fromCode: string;
+  fromName: string;
+  toLabel: string;
+  toCode: string;
+  toName: string;
+  fareLabel: string;
+  /** Formatted fare (comes from the routes collection). */
+  fare: string;
+  cta: string;
+  /** Prefilled WhatsApp message. */
+  message: string;
+}
+
+interface Props {
+  image: ImageMetadata;
+  imageAlt: string;
+  eyebrow: string;
+  headline: string;
+  headlineAccent: string;
+  lead: string;
+  ticket: HeroTicket;
+  /** Optional background video over the photo (the photo stays as the instant first view). */
+  video?: { src: string; webm?: string; playOnPhones?: boolean };
+}
+
+const {
+  image,
+  imageAlt,
+  eyebrow,
+  headline,
+  headlineAccent,
+  lead,
+  ticket,
+  video,
+} = Astro.props;
+
+const ends = [
+  {
+    label: ticket.fromLabel,
+    code: ticket.fromCode,
+    name: ticket.fromName,
+    align: "text-left",
+  },
+  {
+    label: ticket.toLabel,
+    code: ticket.toCode,
+    name: ticket.toName,
+    align: "text-right",
+  },
+];
+
+// Headline split into words for the staggered load-in; accent words keep the marigold colour.
+const words = [
+  ...headline.split(" ").map((text) => ({ text, accent: false })),
+  ...headlineAccent.split(" ").map((text) => ({ text, accent: true })),
+];
+const leadStep = Math.ceil((words.length * 90) / 120) + 1;
+---
+
+<section id="top" data-hero class="group/hero tone-dark">
+  <div class="relative flex min-h-hero flex-col justify-end overflow-hidden bg-primary pt-48 sm:pt-40 md:pt-32">
+    <Picture
+      src={image}
+      alt={imageAlt}
+      formats={["avif", "webp"]}
+      widths={[640, 960, 1280, 1600, 2000]}
+      sizes="100vw"
+      priority
+      class="absolute inset-0 size-full animate-ken-burns object-cover group-data-[video=on]/hero:animate-none"
+    />
+    {video && <HeroVideo {...video} />}
+    <div
+      aria-hidden="true"
+      class:list={[
+        "absolute inset-0",
+        video ? "scrim-hero-video" : "scrim-hero",
+      ]}
+    ></div>
+
+    <div class="relative flex flex-wrap items-end justify-between gap-8 p-hero-pad">
+      <div class="flex max-w-195 flex-col gap-5.5 text-white text-shadow-lg/30">
+        <Chip variant="frost" class="enter-0 self-start">
+          {eyebrow}
+        </Chip>
+        <h1 class="m-0 font-display text-hero font-extrabold">
+          {words.map((word, i) => (
+            <>
+              <span
+                class:list={["word-in", word.accent && "text-accent"]}
+                style={`--i: ${i}`}
+              >
+                {word.text}
+              </span>{" "}
+            </>
+          ))}
+        </h1>
+        <p
+          class:list={[
+            "m-0 max-w-152 text-lead leading-normal text-on-photo",
+            enterStep(leadStep),
+          ]}
+        >
+          {lead}
+        </p>
+      </div>
+
+      <div class:list={["max-w-full", enterStep(leadStep + 1)]}>
+        <Ticket
+          label={ticket.label}
+          labelRight={ticket.labelRight}
+          class="animate-float"
+        >
+          <div slot="top" class="flex items-center justify-between gap-2.5">
+            {ends.map((end, i) => (
+              <>
+                {i === 1 && (
+                  <Icon name="ticket-arrow" size={20} class="text-primary" />
+                )}
+                <div class={end.align}>
+                  <Eyebrow as="div" size="tiny" spacing="none">
+                    {end.label}
+                  </Eyebrow>
+                  <div class="font-display text-3xl font-extrabold tracking-title">
+                    {end.code}
+                  </div>
+                  <div class="text-caption text-body">{end.name}</div>
+                </div>
+              </>
+            ))}
+          </div>
+          <Fragment slot="bottom">
+            <div class="flex items-baseline justify-between gap-3">
+              <Eyebrow as="span" size="tiny" spacing="narrow">
+                {ticket.fareLabel}
+              </Eyebrow>
+              <span class="text-lg font-semibold">{ticket.fare}</span>
+            </div>
+            <WhatsAppButton message={ticket.message} variant="dark" fullWidth>
+              {ticket.cta}
+            </WhatsAppButton>
+          </Fragment>
+        </Ticket>
+      </div>
+    </div>
+  </div>
+</section>

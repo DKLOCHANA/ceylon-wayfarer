@@ -1,0 +1,17 @@
+---
+/** Large quote with a marigold rule. */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<blockquote
+  class:list={[
+    "m-0 border-l-4 border-accent pl-6 font-display text-3xl leading-tile font-extrabold tracking-title md:text-4xl",
+    className,
+  ]}
+>
+  <slot />
+</blockquote>

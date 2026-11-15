@@ -1,0 +1,40 @@
+---
+import PullQuote from "@/components/ui/PullQuote.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  /** First paragraph sits above the quote, the rest below. */
+  paragraphs: string[];
+  quote: string;
+}
+
+const { id = "story", eyebrow, title, paragraphs, quote } = Astro.props;
+const [first, ...rest] = paragraphs;
+---
+
+<Section
+  id={id}
+  tone="surface"
+  bordered="both"
+  innerClass="grid gap-12 md:grid-cols-2 md:gap-16"
+>
+  <SectionHeading
+    eyebrow={eyebrow}
+    title={title}
+    layout="stack"
+    titleWidth="none"
+  />
+  <div class="flex flex-col gap-6">
+    {first && (
+      <p class="reveal m-0 text-lead leading-copy text-body">{first}</p>
+    )}
+    <PullQuote class="reveal">“{quote}”</PullQuote>
+    {rest.map((p) => (
+      <p class="reveal m-0 text-base leading-relaxed text-body">{p}</p>
+    ))}
+  </div>
+</Section>

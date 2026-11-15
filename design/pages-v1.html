@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ceylon Wayfarer — Page designs v1 (Route · Itinerary · About)</title>
+<!--
+  DESIGN REFERENCE ONLY — not shipped. Rebuild as Astro pages with existing components.
+  Open in a browser. Photos load from ../src/assets/images/. Fonts from Google Fonts (needs internet).
+  Every [BRACKETED] value is a placeholder for the owner to fill.
+-->
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E2A24;--deep:#0A201B;--primary:#12463A;--ground:#F5F6F1;--surface:#FFFFFF;--body:#3B504A;--muted:#4A5F58;
+  --line:#DCE1DA;--dash:#C9D0C6;--odm:#B9CCC4;--odb:#DDE7E2;--onphoto:#E7EFEB;--accent:#F2A93B;--ph:#E9EDE6;--phl:#9DB3AA;
+  --display:"Bricolage Grotesque",Inter,system-ui,sans-serif;--sans:Inter,system-ui,sans-serif;--mono:"DM Mono",ui-monospace,monospace;
+  --gutter:clamp(20px,4vw,48px);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:#d9ded6}
+img{display:block;max-width:100%}
+a{color:var(--primary)}
+
+/* ---------- mockup chrome (not part of the design) ---------- */
+.switcher{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px var(--gutter);background:var(--deep);color:var(--odm);font:500 12px/1 var(--mono);letter-spacing:.12em}
+.switcher a{color:var(--ground);text-decoration:none;padding:9px 14px;border-radius:999px;border:1px solid #1E3B34}
+.switcher a:hover{background:var(--primary)}
+.frame-label{max-width:1440px;margin:56px auto 12px;padding:0 24px;font:500 12px/1.4 var(--mono);letter-spacing:.14em;color:var(--muted)}
+.frame-label b{color:var(--ink)}
+.frame{max-width:1440px;margin:0 auto;background:var(--ground);box-shadow:0 30px 80px rgb(0 0 0/.18);overflow:hidden}
+
+/* ---------- shared design pieces ---------- */
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--gutter)}
+.eyebrow{margin:0;font:400 13px/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow.accent{color:var(--accent)}
+.h1{margin:0;font:800 clamp(48px,7vw,104px)/.9 var(--display);letter-spacing:-.045em}
+.h2{margin:0;font:800 clamp(36px,4.4vw,64px)/.95 var(--display);letter-spacing:-.04em}
+.h3{margin:0;font:800 26px/1.05 var(--display);letter-spacing:-.02em}
+.lead{margin:0;font-size:19px;line-height:1.55;color:var(--body)}
+.p{margin:0;font-size:16px;line-height:1.6;color:var(--body)}
+.mono{font-family:var(--mono)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:999px;font-weight:600;font-size:16px;text-decoration:none;border:0;cursor:pointer;white-space:nowrap}
+.btn-primary{background:var(--accent);color:var(--ink)}
+.btn-dark{background:var(--ink);color:var(--ground)}
+.btn-ghost{border:1.5px solid rgb(255 255 255/.6);color:#fff}
+.btn-outline{border:1.5px solid rgb(14 42 36/.3);color:var(--ink);background:transparent}
+.btn svg{width:18px;height:18px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:14px;font-weight:500}
+.chip.glass{background:rgb(14 42 36/.5);border:1px solid rgb(255 255 255/.2);color:#fff;backdrop-filter:blur(10px);font:400 12px/1 var(--mono);letter-spacing:.12em}
+.ph{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;border:2px dashed var(--phl);background:var(--ph);color:var(--muted);font:400 13px/1.7 var(--mono);white-space:pre-line}
+.section{padding:96px 0}
+.surface{background:var(--surface)}
+.border-y{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+/* nav (solid pill over photo) */
+.nav{position:absolute;inset:20px 20px auto;z-index:5;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:8px 8px 8px 18px;border-radius:999px;background:rgb(14 42 36/.4);backdrop-filter:blur(14px);border:1px solid rgb(255 255 255/.18);color:#fff}
+.nav .logo{display:flex;align-items:center;gap:10px;font:800 20px var(--display);letter-spacing:-.02em}
+.nav nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;font-size:15px;font-weight:500}
+.nav nav a{color:#fff;text-decoration:none}
+.nav nav a.on{color:var(--accent)}
+.nav .btn{min-height:44px;padding:0 20px;font-size:15px}
+
+/* photo hero (full-bleed, like the home page) */
+.hero{position:relative;min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;background:var(--primary);overflow:hidden}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgb(10 32 27/.5) 0%,rgb(10 32 27/0) 30%,rgb(10 32 27/.15) 50%,rgb(10 32 27/.85) 100%)}
+.hero-inner{position:relative;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:32px;padding:150px clamp(20px,4vw,56px) clamp(28px,4vw,56px)}
+@media(max-width:760px){.hero-inner{padding-top:240px}.nav{border-radius:24px}}
+.crumbs{display:flex;gap:10px;font:400 12px/1 var(--mono);letter-spacing:.12em;color:var(--onphoto)}
+.crumbs a{color:var(--onphoto);text-decoration:none}
+
+/* ticket */
+.ticket{width:340px;max-width:100%;background:var(--ground);color:var(--ink);border-radius:22px;box-shadow:0 24px 60px rgb(0 0 0/.28)}
+.ticket .t-top{padding:20px 22px 16px;display:flex;flex-direction:column;gap:14px}
+.ticket .t-bot{padding:14px 22px 20px;display:flex;flex-direction:column;gap:14px}
+.ticket .perf{margin:0 22px;border-top:2px dashed var(--dash)}
+.t-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font:400 11px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}
+.t-ends{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.t-code{font:800 30px/1.1 var(--display);letter-spacing:-.02em}
+.t-name{font-size:13px;color:var(--body)}
+.t-price{font-weight:600;font-size:18px;color:var(--ink);letter-spacing:0;font-family:var(--sans)}
+
+/* facts strip */
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line);background:var(--surface)}
+.facts div{padding:26px var(--gutter);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.facts div:last-child{border-right:0}
+.facts b{font:800 24px/1 var(--display);letter-spacing:-.02em}
+@media(max-width:760px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}.facts div:nth-child(2){border-right:0}.facts div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+
+/* two-column with sticky aside */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:64px;align-items:start}
+.sticky{position:sticky;top:84px;display:flex;flex-direction:column;gap:16px}
+@media(max-width:980px){.cols{grid-template-columns:1fr}.sticky{position:static}}
+
+/* stop timeline */
+.timeline{list-style:none;margin:0;padding:0;position:relative}
+.timeline:before{content:"";position:absolute;left:23px;top:24px;bottom:24px;width:2px;background:repeating-linear-gradient(180deg,rgb(18 70 58/.4) 0 8px,transparent 8px 16px);animation:march 0.8s linear infinite}
+@keyframes march{to{background-position-y:16px}}
+.timeline li{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr);gap:20px;padding-bottom:28px}
+.timeline li:last-child{padding-bottom:0}
+.pin{position:relative;z-index:1;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--primary);color:var(--ground);font:500 13px var(--mono);box-shadow:0 0 0 6px var(--ground)}
+.pin.start,.pin.end{background:var(--accent);color:var(--ink)}
+.stop{padding:4px 0 0;display:flex;flex-direction:column;gap:8px}
+.stop .meta{font:400 12px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}
+.stop h3{margin:0;font-size:21px;font-weight:600;letter-spacing:-.01em}
+.stop-photo{margin-top:6px;width:100%;max-width:420px;aspect-ratio:16/9;object-fit:cover;border-radius:16px}
+
+/* include / exclude */
+.incl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.incl .box{border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.incl ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;font-size:15px}
+.incl li{display:flex;gap:10px;align-items:flex-start}
+.incl .yes{background:var(--surface);border:1px solid var(--line)}
+.incl .no{background:var(--ph)}
+.ic{flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ic svg{width:13px;height:13px}
+.ic.y{background:var(--primary);color:var(--ground)}
+.ic.n{background:var(--dash);color:var(--ink)}
+@media(max-width:640px){.incl{grid-template-columns:1fr}}
+
+/* small faq */
+details{border-bottom:1px solid var(--line)}
+summary{padding:18px 0;font-size:18px;font-weight:600;cursor:pointer}
+details p{margin:-6px 0 18px}
+
+/* route cards */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media(max-width:900px){.cards{grid-template-columns:1fr}}
+.rcard{background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s}
+.rcard:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgb(0 0 0/.12)}
+.rcard .img{position:relative;aspect-ratio:16/10;overflow:hidden}
+.rcard .img img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.rcard:hover .img img{transform:scale(1.06)}
+.rcard .img .chip{position:absolute;left:12px;bottom:12px}
+.rcard .body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px}
+.rcard .perf{border-top:2px dashed var(--dash);margin:4px 0}
+.rcard .foot{display:flex;justify-content:space-between;align-items:center;font-weight:600}
+
+/* CTA band */
+.cta{position:relative;padding:14px;background:var(--deep)}
+.cta-in{position:relative;min-height:420px;border-radius:32px;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}
+.cta-in img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cta-in .scrim{position:absolute;inset:0;background:rgb(10 32 27/.62)}
+.cta-in .c{position:relative;display:flex;flex-direction:column;align-items:center;gap:22px;padding:64px var(--gutter)}
+.cta-in h2{margin:0;font:800 clamp(48px,7vw,104px)/.88 var(--display);letter-spacing:-.05em}
+
+/* ---------- itinerary-specific ---------- */
+.itin{display:grid;grid-template-columns:420px minmax(0,1fr);gap:64px;align-items:start}
+@media(max-width:1000px){.itin{grid-template-columns:1fr}}
+.mapcard{position:sticky;top:84px;background:var(--ink);color:var(--ground);border-radius:28px;padding:26px;display:flex;flex-direction:column;gap:18px}
+@media(max-width:1000px){.mapcard{position:static}}
+.map svg{width:100%;height:auto;display:block}
+.route-path{stroke-dasharray:3 7;animation:route 1.2s linear infinite}
+@keyframes route{to{stroke-dashoffset:-20}}
+.legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;font:400 12px/1.3 var(--mono);letter-spacing:.06em;color:var(--odm)}
+.legend span b{color:var(--accent);font-weight:500;margin-right:6px}
+.days{display:flex;flex-direction:column;gap:16px;position:relative}
+.day{display:grid;grid-template-columns:150px minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.day>img{width:100%;height:100%;object-fit:cover;min-height:180px}
+.day .d{padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+.day .dtop{display:flex;justify-content:space-between;gap:12px;font:400 12px/1 var(--mono);letter-spacing:.12em;color:var(--muted)}
+.day .dtop b{color:var(--primary);font-weight:500}
+.day .tags{display:flex;flex-wrap:wrap;gap:6px}
+.day .tags span{font-size:13px;padding:6px 11px;border-radius:999px;background:var(--ground);border:1px solid var(--line)}
+.day .night{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);padding-top:10px;border-top:1px dashed var(--dash)}
+@media(max-width:600px){.day{grid-template-columns:1fr}.day>img{aspect-ratio:16/9;min-height:0}}
+.addons{display:flex;flex-wrap:wrap;gap:10px}
+.addons .chip{cursor:pointer}
+.addons .chip.plus:before{content:"+";font-weight:700;color:var(--primary)}
+
+/* ---------- about-specific ---------- */
+.about-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:64px;align-items:center;padding:150px 0 96px}
+@media(max-width:960px){.about-hero{grid-template-columns:1fr}}
+.about-photo{position:relative;padding:0 40px 40px 0}
+.about-photo .ph{aspect-ratio:4/5;border-radius:28px}
+.pass{position:absolute;right:0;bottom:0;width:62%;transform:rotate(3deg)}
+.pass .ticket{width:100%}
+.pass .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.pass .kv span:nth-child(odd){font:400 11px/1.6 var(--mono);letter-spacing:.12em;color:var(--muted)}
+.solid-nav{background:var(--ink)}
+.story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px}
+@media(max-width:900px){.story{grid-template-columns:1fr}}
+.quote{margin:0;font:800 clamp(28px,3vw,40px)/1.08 var(--display);letter-spacing:-.02em;padding-left:24px;border-left:4px solid var(--accent)}
+.van-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:220px;gap:16px}
+.van-grid .ph{border-radius:24px}
+.van-grid .ph.big{grid-row:span 2}
+.specs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.spec{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.spec b{font:800 22px/1.1 var(--display);letter-spacing:-.02em}
+@media(max-width:900px){.van-grid{grid-template-columns:1fr 1fr;grid-auto-rows:170px}.van-grid .ph.big{grid-column:span 2;grid-row:auto}.specs{grid-template-columns:1fr 1fr}}
+.halfway{background:var(--ink);color:var(--ground);border-radius:28px;padding:40px;display:flex;flex-direction:column;gap:28px}
+.hw-line{position:relative;display:flex;justify-content:space-between;align-items:flex-start;padding-top:8px}
+.hw-line:before{content:"";position:absolute;left:24px;right:24px;top:31px;height:2px;background:repeating-linear-gradient(90deg,rgb(185 204 196/.5) 0 8px,transparent 8px 16px);animation:marchx .8s linear infinite}
+@keyframes marchx{to{background-position-x:16px}}
+.hw-stop{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;width:33%}
+.hw-stop .pin{box-shadow:0 0 0 6px var(--ink)}
+.hw-stop b{font:800 22px/1 var(--display);letter-spacing:-.02em}
+.hw-stop small{font:400 12px/1.4 var(--mono);letter-spacing:.1em;color:var(--odm)}
+.hw-van{position:absolute;top:18px;left:24px;animation:hw 6s ease-in-out infinite alternate}
+@keyframes hw{from{left:24px}to{left:calc(100% - 72px)}}
+.values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.value{border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;min-height:240px;justify-content:space-between}
+.value.a{background:var(--accent)}
+.value.b{background:var(--primary);color:var(--ground)}
+.value.b .p{color:var(--odb)}
+.value.c{background:var(--surface);border:1px solid var(--line)}
+@media(max-width:900px){.values{grid-template-columns:1fr}}
+
+/* annotation callouts (design notes) */
+.note{display:inline-flex;gap:8px;align-items:flex-start;max-width:520px;margin-top:14px;padding:10px 14px;border-radius:12px;background:#FFF4DF;border:1px dashed var(--accent);color:#6B4A12;font:400 12px/1.5 var(--mono)}
+.note:before{content:"✎";}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <span>PAGE DESIGNS v1 →</span>
+  <a href="#route">1 · ROUTE PAGE</a>
+  <a href="#itinerary">2 · ITINERARY PAGE</a>
+  <a href="#about">3 · ABOUT PAGE</a>
+</div>
+
+<!-- SVG sprites -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="wa" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.6A8.4 8.4 0 1 1 21 11.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#12463A"/><path d="M14 46 C24 46 22 30 32 30 S40 18 50 18" fill="none" stroke="#F2A93B" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="18" r="5" fill="#F5F6F1"/><circle cx="14" cy="46" r="4" fill="#F2A93B"/></symbol>
+</svg>
+
+<!-- =====================================================================
+     1 · ROUTE PAGE  —  /routes/kandy-to-ella
+     ===================================================================== -->
+<p class="frame-label" id="route"><b>1 · ROUTE PAGE</b> — /routes/kandy-to-ella · one per route file · goal: quote for THIS route</p>
+<div class="frame">
+
+  <section class="hero">
+    <img src="../src/assets/images/tea.jpg" alt="Tea bushes and trees disappearing into mist">
+    <div class="scrim"></div>
+    <div class="nav">
+      <span class="logo"><svg width="34" height="34"><use href="#logo"/></svg>Ceylon Wayfarer</span>
+      <nav><a class="on" href="#">Routes</a><a href="#">Itineraries</a><a href="#">About</a><a href="#">FAQ</a><a class="btn btn-primary" href="#"><svg><use href="#wa"/></svg>WhatsApp me</a></nav>
+    </div>
+    <div class="hero-inner">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:720px">
+        <div class="crumbs"><a href="#">ROUTES</a><span>/</span><span>KANDY → ELLA</span></div>
+        <span class="chip glass" style="align-self:flex-start">HILL COUNTRY · FULL DAY</span>
+        <h1 class="h1">Kandy → Ella</h1>
+        <p class="lead" style="color:var(--onphoto);max-width:32em">Tea estates, waterfalls and Nuwara Eliya on the way, ending near the Nine Arch Bridge.</p>
+      </div>
+      <div class="ticket">
+        <div class="t-top">
+          <div class="t-row"><span>RIDE TICKET</span><span>ONE WAY</span></div>
+          <div class="t-ends">
+            <div><div class="t-row">FROM</div><div class="t-code">KDY</div><div class="t-name">Kandy</div></div>
+            <svg width="56" height="20" viewBox="0 0 56 20" fill="none" stroke="#12463A" stroke-width="2" stroke-linecap="round"><path d="M2 10h48" stroke-dasharray="2 5"/><path d="M44 4l6 6-6 6"/></svg>
+            <div style="text-align:right"><div class="t-row" style="justify-content:flex-end">TO</div><div class="t-code">ELLA</div><div class="t-name">Ella</div></div>
+          </div>
+        </div>
+        <div class="perf"></div>
+        <div class="t-bot">
+          <div class="t-row"><span>FROM, WHOLE VAN</span><span class="t-price">[YOUR PRICE]</span></div>
+          <a class="btn btn-dark" href="#"><svg><use href="#wa"/></svg>Get a quote for this route</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="facts">
+    <div><span class="eyebrow">DRIVE TIME</span><b>[~X h]</b><span class="p" style="font-size:14px">plus stops</span></div>
+    <div><span class="eyebrow">DISTANCE</span><b>[X] km</b><span class="p" style="font-size:14px">via Nuwara Eliya</span></div>
+    <div><span class="eyebrow">PICKUP</span><b>Your hotel</b><span class="p" style="font-size:14px">in Kandy, [TIME]</span></div>
+    <div><span class="eyebrow">VAN</span><b>[X] seats</b><span class="p" style="font-size:14px">air-conditioned [VAN MODEL]</span></div>
+  </div>
+
+  <section class="section">
+    <div class="wrap cols">
+      <div style="display:flex;flex-direction:column;gap:72px">
+
+        <div style="display:flex;flex-direction:column;gap:32px">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <p class="eyebrow">01 — THE DRIVE</p>
+            <h2 class="h2">Stop where you like.</h2>
+            <p class="lead">[One or two lines in your words: why this is your favourite drive, what guests love most.]</p>
+          </div>
+          <ol class="timeline">
+            <li><span class="pin start">A</span><div class="stop"><span class="meta">START · [TIME]</span><h3>Pickup at your hotel in Kandy</h3><p class="p">[Pickup details.]</p></div></li>
+            <li><span class="pin">01</span><div class="stop"><span class="meta">[~X MIN] FROM KANDY</span><h3>Tea estate &amp; factory</h3><p class="p">[Which estate you stop at and what guests can see.]</p><img class="stop-photo" src="../src/assets/images/tea.jpg" alt=""></div></li>
+            <li><span class="pin">02</span><div class="stop"><span class="meta">[~X MIN]</span><h3>[WATERFALL NAME]</h3><p class="p">[Short note.]</p></div></li>
+            <li><span class="pin">03</span><div class="stop"><span class="meta">[~X MIN]</span><h3>Nuwara Eliya</h3><p class="p">[Lunch stop? What to see.]</p></div></li>
+            <li><span class="pin end">B</span><div class="stop"><span class="meta">ARRIVE · [TIME]</span><h3>Ella, near the Nine Arch Bridge</h3><p class="p">[Drop-off at your hotel.]</p><img class="stop-photo" src="../src/assets/images/hero.jpg" alt=""></div></li>
+          </ol>
+          <span class="note">Stops come from the route's markdown body (a "stops" list in frontmatter). The dotted line marches like the home page flow.</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <p class="eyebrow">02 — THE PRICE</p>
+          <h2 class="h2">One price. No surprises.</h2>
+          <div class="incl">
+            <div class="box yes">
+              <span class="eyebrow">INCLUDED</span>
+              <ul>
+                <li><span class="ic y"><svg><use href="#check"/></svg></span>[Fuel]</li>
+                <li><span class="ic y"><svg><use href="#check"/></svg></span>[Parking &amp; highway tolls]</li>
+                <li><span class="ic y"><svg><use href="#check"/></svg></span>[Stops along the way]</li>
+                <li><span class="ic y"><svg><use href="#check"/></svg></span>Air-conditioned van, whole van for your group</li>
+              </ul>
+            </div>
+            <div class="box no">
+              <span class="eyebrow">NOT INCLUDED</span>
+              <ul>
+                <li><span class="ic n"><svg><use href="#x"/></svg></span>[Entrance tickets]</li>
+                <li><span class="ic n"><svg><use href="#x"/></svg></span>[Meals]</li>
+                <li><span class="ic n"><svg><use href="#x"/></svg></span>Guides (I'll connect you with licensed guides)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <p class="eyebrow">03 — GOOD TO KNOW</p>
+          <div>
+            <details open><summary>Can we take the train for part of the way?</summary><p class="p">[Your answer — e.g. you drop guests at a station and meet them in Ella with the luggage.]</p></details>
+            <details><summary>Is it a one-way or return trip?</summary><p class="p">[Your answer.]</p></details>
+            <details><summary>What's the best time to leave?</summary><p class="p">[Your answer.]</p></details>
+          </div>
+        </div>
+      </div>
+
+      <aside class="sticky">
+        <div class="ticket" style="width:100%;box-shadow:0 12px 30px rgb(0 0 0/.1)">
+          <div class="t-top">
+            <div class="t-row"><span>KDY → ELLA</span><span>FULL DAY</span></div>
+            <div style="font:800 28px/1 var(--display);letter-spacing:-.02em">[YOUR PRICE]</div>
+            <div class="t-row"><span>FROM, WHOLE VAN · UP TO [X]</span></div>
+          </div>
+          <div class="perf"></div>
+          <div class="t-bot">
+            <a class="btn btn-primary" href="#"><svg><use href="#wa"/></svg>Get a quote</a>
+            <span class="p" style="font-size:13px;text-align:center">Prefilled: "Hi Lochana, I'd like a quote for the Kandy → Ella route."</span>
+          </div>
+        </div>
+        <span class="note">Sticky booking ticket follows the reader on desktop; on phones it becomes a bottom bar.</span>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section surface border-y">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:14px"><p class="eyebrow">MORE ROUTES</p><h2 class="h2">Keep going.</h2></div>
+        <a class="btn btn-outline" href="#">All routes <svg><use href="#arrow"/></svg></a>
+      </div>
+      <div class="cards">
+        <a class="rcard" href="#"><div class="img"><img src="../src/assets/images/beach.jpg" alt=""><span class="chip glass">MULTI-DAY TOUR</span></div><div class="body"><span class="eyebrow">ISLAND LOOP · [X] DAYS</span><span class="h3">The island loop</span><div class="perf"></div><div class="foot"><span>[YOUR PRICE] <span class="mono" style="font-size:11px;color:var(--muted)">/DAY</span></span><svg width="20" height="20"><use href="#arrow"/></svg></div></div></a>
+        <a class="rcard" href="#"><div class="img"><img src="../src/assets/images/sigiriya.jpg" alt=""><span class="chip glass">DAY TRIP</span></div><div class="body"><span class="eyebrow">KDY → SIGIRIYA · FULL DAY</span><span class="h3">Kandy → Sigiriya</span><div class="perf"></div><div class="foot"><span>[YOUR PRICE]</span><svg width="20" height="20"><use href="#arrow"/></svg></div></div></a>
+        <a class="rcard" href="#"><div class="img"><img src="../src/assets/images/elephants.jpg" alt=""><span class="chip glass">WILDLIFE SAFARI</span></div><div class="body"><span class="eyebrow">KDY → MINNERIYA · FULL DAY</span><span class="h3">Kandy → Minneriya</span><div class="perf"></div><div class="foot"><span>[YOUR PRICE]</span><svg width="20" height="20"><use href="#arrow"/></svg></div></div></a>
+      </div>
+      <span class="note">Route cards = the "Ticket" look (dashed perforation). The same card is used on /routes (all routes grid).</span>
+    </div>
+  </section>
+
+  <section class="cta"><div class="cta-in"><img src="../src/assets/images/sunset.jpg" alt=""><div class="scrim"></div><div class="c"><p class="eyebrow accent">READY WHEN YOU ARE</p><h2>Ella, here we come?</h2><a class="btn btn-primary" style="min-height:60px;padding:0 32px;font-size:18px" href="#"><svg><use href="#wa"/></svg>WhatsApp +94 [YOUR NUMBER]</a></div></div></section>
+</div>
+
+<!-- =====================================================================
+     2 · ITINERARY PAGE  —  /itineraries/7-days-classic
+     ===================================================================== -->
+<p class="frame-label" id="itinerary"><b>2 · ITINERARY PAGE</b> — /itineraries/7-days-classic · sample multi-day plan · goal: quote for a tour, adjusted to the guest</p>
+<div class="frame">
+
+  <section class="hero" style="min-height:600px">
+    <img src="../src/assets/images/hero.jpg" alt="">
+    <div class="scrim"></div>
+    <div class="nav">
+      <span class="logo"><svg width="34" height="34"><use href="#logo"/></svg>Ceylon Wayfarer</span>
+      <nav><a href="#">Routes</a><a class="on" href="#">Itineraries</a><a href="#">About</a><a href="#">FAQ</a><a class="btn btn-primary" href="#"><svg><use href="#wa"/></svg>WhatsApp me</a></nav>
+    </div>
+    <div class="hero-inner">
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:760px">
+        <div class="crumbs"><a href="#">ITINERARIES</a><span>/</span><span>7 DAYS</span></div>
+        <span class="chip glass" style="align-self:flex-start">SAMPLE ITINERARY · 7 DAYS · 6 NIGHTS</span>
+        <h1 class="h1">Seven days, the classic loop.</h1>
+        <p class="lead" style="color:var(--onphoto);max-width:32em">Ancient cities, tea country, the train-bridge town and the south coast. One driver the whole way — change anything you like.</p>
+      </div>
+      <div class="ticket">
+        <div class="t-top">
+          <div class="t-row"><span>TOUR TICKET</span><span>7 DAYS</span></div>
+          <div class="t-ends">
+            <div><div class="t-row">START</div><div class="t-code">BIA</div><div class="t-name">Airport</div></div>
+            <svg width="56" height="20" viewBox="0 0 56 20" fill="none" stroke="#12463A" stroke-width="2" stroke-linecap="round"><path d="M2 10h48" stroke-dasharray="2 5"/><path d="M44 4l6 6-6 6"/></svg>
+            <div style="text-align:right"><div class="t-row" style="justify-content:flex-end">END</div><div class="t-code">BIA</div><div class="t-name">Airport</div></div>
+          </div>
+        </div>
+        <div class="perf"></div>
+        <div class="t-bot">
+          <div class="t-row"><span>PER DAY, WHOLE VAN</span><span class="t-price">[YOUR PRICE]</span></div>
+          <a class="btn btn-dark" href="#"><svg><use href="#wa"/></svg>Plan my trip on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap itin">
+      <aside class="mapcard">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow accent">THE ROUTE</span><span class="eyebrow" style="color:var(--odm)">[~X] KM TOTAL</span></div>
+        <div class="map">
+          <svg viewBox="0 0 200 300" aria-label="Map of Sri Lanka showing the 7 day route">
+            <path d="M88 8C104 14 118 40 132 70C152 110 172 140 174 175C176 215 166 245 150 262C132 282 104 296 76 294C56 292 44 278 36 256C28 232 26 205 28 180C30 150 34 120 44 92C54 62 70 28 88 8Z" fill="#12463A" stroke="#1E5A4B" stroke-width="1.5"/>
+            <path class="route-path" d="M40 198 L97 143 L89 190 L99 215 L116 220 L78 286 L62 280 L40 198" fill="none" stroke="#F2A93B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g font-family="DM Mono, monospace" font-size="7.5" fill="#DDE7E2">
+              <circle cx="40" cy="198" r="5" fill="#F2A93B"/><text x="12" y="213">AIRPORT</text>
+              <circle cx="97" cy="143" r="4.5" fill="#F5F6F1"/><text x="104" y="141">SIGIRIYA</text>
+              <circle cx="89" cy="190" r="4.5" fill="#F5F6F1"/><text x="55" y="186">KANDY</text>
+              <circle cx="99" cy="215" r="4.5" fill="#F5F6F1"/><text x="62" y="230">N. ELIYA</text>
+              <circle cx="116" cy="220" r="4.5" fill="#F5F6F1"/><text x="123" y="222">ELLA</text>
+              <circle cx="78" cy="286" r="4.5" fill="#F5F6F1"/><text x="86" y="280">MIRISSA</text>
+              <circle cx="62" cy="280" r="4.5" fill="#F5F6F1"/><text x="30" y="270">GALLE</text>
+            </g>
+            <circle r="5" fill="#F2A93B" stroke="#0E2A24" stroke-width="2"><animateMotion dur="14s" repeatCount="indefinite" path="M40 198 L97 143 L89 190 L99 215 L116 220 L78 286 L62 280 L40 198"/></circle>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><b>01</b>Airport → Sigiriya</span><span><b>02</b>Sigiriya &amp; Dambulla</span>
+          <span><b>03</b>Sigiriya → Kandy</span><span><b>04</b>Kandy → Nuwara Eliya</span>
+          <span><b>05</b>Nuwara Eliya → Ella</span><span><b>06</b>Ella → Mirissa</span>
+          <span><b>07</b>Galle → Airport</span>
+        </div>
+        <span class="note" style="margin:0">Stylised island map (inline SVG). The dotted route marches; a marigold "van" dot drives the loop.</span>
+      </aside>
+
+      <div style="display:flex;flex-direction:column;gap:40px">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <p class="eyebrow">DAY BY DAY</p>
+          <h2 class="h2">Your week, mapped out.</h2>
+          <p class="lead">A starting point, not a fixed package. Tell me your dates and what you love, and I'll shape it around you.</p>
+        </div>
+
+        <div class="days">
+          <article class="day"><img src="../src/assets/images/sigiriya.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 01</b><span>[~X H] DRIVE</span></div><span class="h3">Airport → Sigiriya</span><p class="p">[Pickup at arrivals with a name sign. What you do on the way.]</p><div class="tags"><span>Airport pickup</span><span>[Stop]</span></div><div class="night"><svg width="16" height="16"><use href="#moon"/></svg>Overnight in Sigiriya</div></div></article>
+          <article class="day"><img src="../src/assets/images/temple.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 02</b><span>[~X H] DRIVE</span></div><span class="h3">Sigiriya &amp; Dambulla</span><p class="p">[Lion Rock early morning, Dambulla cave temples in the afternoon.]</p><div class="tags"><span>Sigiriya rock</span><span>Dambulla caves</span><span>+ Minneriya safari?</span></div><div class="night"><svg width="16" height="16"><use href="#moon"/></svg>Overnight in Sigiriya</div></div></article>
+          <article class="day"><img src="../src/assets/images/lake.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 03</b><span>[~X H] DRIVE</span></div><span class="h3">Sigiriya → Kandy</span><p class="p">[Stops on the way; evening at the Temple of the Tooth.]</p><div class="tags"><span>Temple of the Tooth</span><span>Kandy Lake</span></div><div class="night"><svg width="16" height="16"><use href="#moon"/></svg>Overnight in Kandy</div></div></article>
+          <article class="day"><img src="../src/assets/images/tea.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 04–05</b><span>[~X H] DRIVE</span></div><span class="h3">Tea country to Ella</span><p class="p">[Tea factory, waterfalls, Nuwara Eliya; on to Ella and the Nine Arch Bridge.]</p><div class="tags"><span>Tea estates</span><span>Nuwara Eliya</span><span>Nine Arch Bridge</span></div><div class="night"><svg width="16" height="16"><use href="#moon"/></svg>Overnight in Nuwara Eliya, then Ella</div></div></article>
+          <article class="day"><img src="../src/assets/images/beach.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 06</b><span>[~X H] DRIVE</span></div><span class="h3">Ella → Mirissa</span><p class="p">[Down from the hills to the south coast.]</p><div class="tags"><span>+ Yala safari?</span><span>Beach</span></div><div class="night"><svg width="16" height="16"><use href="#moon"/></svg>Overnight in Mirissa</div></div></article>
+          <article class="day"><img src="../src/assets/images/galle.jpg" alt=""><div class="d"><div class="dtop"><b>DAY 07</b><span>[~X H] DRIVE</span></div><span class="h3">Galle Fort → Airport</span><p class="p">[Walk the fort walls, then drop-off at the airport for your flight.]</p><div class="tags"><span>Galle Fort</span><span>Airport drop-off</span></div><div class="night" style="color:var(--primary);font-weight:600">✈ Fly home</div></div></article>
+        </div>
+        <span class="note">Days come from an "itinerary" list in the route's frontmatter (day, title, drive, overnight, tags, image). Cards reveal on scroll.</span>
+
+        <div class="surface" style="border:1px solid var(--line);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px">
+          <p class="eyebrow">MAKE IT YOURS</p>
+          <span class="h3">Add, swap or slow down.</span>
+          <div class="addons">
+            <span class="chip plus">Minneriya elephant safari</span><span class="chip plus">Yala safari</span><span class="chip plus">Extra beach days</span><span class="chip plus">Train ride Kandy → Ella</span><span class="chip plus">Whale watching</span>
+          </div>
+          <a class="btn btn-primary" style="align-self:flex-start" href="#"><svg><use href="#wa"/></svg>Ask for my version</a>
+          <span class="note" style="margin:0">Plain links (no JS): each chip opens WhatsApp with "…7-day loop, plus a Yala safari". Owner confirms which add-ons he offers.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta"><div class="cta-in"><img src="../src/assets/images/sunset.jpg" alt=""><div class="scrim"></div><div class="c"><p class="eyebrow accent">YOUR DATES, YOUR PACE</p><h2>Seven days. One driver.</h2><a class="btn btn-primary" style="min-height:60px;padding:0 32px;font-size:18px" href="#"><svg><use href="#wa"/></svg>WhatsApp +94 [YOUR NUMBER]</a></div></div></section>
+</div>
+
+<!-- =====================================================================
+     3 · ABOUT PAGE  —  /about
+     ===================================================================== -->
+<p class="frame-label" id="about"><b>3 · ABOUT PAGE</b> — /about · goal: trust — who is driving, in what van, how he works</p>
+<div class="frame">
+
+  <div class="solid-nav" style="position:relative;height:84px"><div class="nav" style="background:var(--ink);border-color:transparent">
+    <span class="logo"><svg width="34" height="34"><use href="#logo"/></svg>Ceylon Wayfarer</span>
+    <nav><a href="#">Routes</a><a href="#">Itineraries</a><a class="on" href="#">About</a><a href="#">FAQ</a><a class="btn btn-primary" href="#"><svg><use href="#wa"/></svg>WhatsApp me</a></nav>
+  </div></div>
+
+  <div class="wrap about-hero" style="padding-top:72px">
+    <div class="about-photo">
+      <div class="ph">PHOTO — you, smiling, beside the van.
+Natural light, no sunglasses.</div>
+      <div class="pass">
+        <div class="ticket">
+          <div class="t-top">
+            <div class="t-row"><span>DRIVER PASS</span><span>№ 001</span></div>
+            <div class="kv">
+              <span>NAME</span><span><b>Lochana</b></span>
+              <span>BASED</span><span>Kegalle, Sri Lanka</span>
+              <span>SPEAKS</span><span>English &amp; Sinhala</span>
+              <span>DRIVES</span><span>[VAN MODEL], [X] seats</span>
+            </div>
+          </div>
+          <div class="perf"></div>
+          <div class="t-bot"><div class="t-row"><span>REPLIES WITHIN</span><span class="t-price">[X] hours</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <p class="eyebrow">ABOUT · YOUR DRIVER</p>
+      <h1 class="h1" style="font-size:clamp(48px,6vw,92px)">Hi, I'm Lochana.</h1>
+      <p class="lead">[Two or three lines about you: where you're from, the places you love showing guests, and why you started driving.]</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <span class="chip">English &amp; Sinhala</span><span class="chip">Based in Kegalle</span><span class="chip">Halfway from airport to Kandy</span><span class="chip">Replies on WhatsApp</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn btn-primary" href="#"><svg><use href="#wa"/></svg>Say hello on WhatsApp</a><a class="btn btn-outline" href="#">See my routes</a></div>
+    </div>
+  </div>
+
+  <section class="section surface border-y">
+    <div class="wrap story">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <p class="eyebrow">01 — MY STORY</p>
+        <h2 class="h2">From Kegalle, for the whole island.</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <p class="lead">[Your story in your own words — how long you've been driving, the first guests you drove, what you enjoy about it.]</p>
+        <blockquote class="quote">“[A line you'd say to a guest on day one.]”</blockquote>
+        <p class="p">[A second paragraph — your family, your town, the places you'd take your own friends.]</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:720px"><p class="eyebrow">02 — THE VAN</p><h2 class="h2">Cool, clean, and room for the surfboards.</h2></div>
+      <div class="van-grid">
+        <div class="ph big">PHOTO — the van, clean, side-on.</div>
+        <div class="ph">PHOTO — inside: seats.</div>
+        <div class="ph">PHOTO — luggage space.</div>
+        <div class="ph" style="grid-column:span 2">PHOTO — the van at a viewpoint.</div>
+      </div>
+      <div class="specs">
+        <div class="spec"><span class="eyebrow">MODEL</span><b>[VAN MODEL]</b></div>
+        <div class="spec"><span class="eyebrow">SEATS</span><b>Up to [X]</b></div>
+        <div class="spec"><span class="eyebrow">COMFORT</span><b>Air-conditioned</b></div>
+        <div class="spec"><span class="eyebrow">LUGGAGE</span><b>Big bags &amp; boards</b></div>
+      </div>
+      <span class="note">All four specs read from site.ts (van.model, van.seats). Real photos replace the dashed placeholders.</span>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="halfway">
+        <div style="display:flex;flex-direction:column;gap:14px;max-width:680px">
+          <p class="eyebrow accent">03 — WHY KEGALLE WORKS FOR YOU</p>
+          <h2 class="h2">Right in the middle of your first drive.</h2>
+          <p class="lead" style="color:var(--odb)">I live on the Colombo–Kandy road, halfway between the airport and Kandy — so early pickups and late arrivals are easy.</p>
+        </div>
+        <div class="hw-line">
+          <svg class="hw-van" width="48" height="28" viewBox="0 0 48 28"><path d="M2 8a6 6 0 0 1 6-6h24l10 9a5 5 0 0 1 2 4v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3z" fill="#F5F6F1" stroke="#0E2A24" stroke-width="2"/><rect x="8" y="6" width="9" height="6" rx="1.5" fill="#12463A"/><rect x="20" y="6" width="9" height="6" rx="1.5" fill="#12463A"/><circle cx="12" cy="24" r="4" fill="#0E2A24" stroke="#F5F6F1" stroke-width="1.5"/><circle cx="34" cy="24" r="4" fill="#0E2A24" stroke="#F5F6F1" stroke-width="1.5"/></svg>
+          <div class="hw-stop" style="margin-top:44px"><span class="pin start">BIA</span><b>Airport</b><small>BANDARANAIKE</small></div>
+          <div class="hw-stop" style="margin-top:44px"><span class="pin" style="background:var(--accent);color:var(--ink);width:56px;height:56px">●</span><b>Kegalle</b><small>HOME BASE</small></div>
+          <div class="hw-stop" style="margin-top:44px"><span class="pin end">KDY</span><b>Kandy</b><small>HILL CAPITAL</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface border-y">
+    <div class="wrap" style="display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-direction:column;gap:14px"><p class="eyebrow">04 — HOW I WORK</p><h2 class="h2">Three promises.</h2></div>
+      <div class="values">
+        <div class="value a"><span class="eyebrow" style="color:var(--ink)">FIXED PRICE</span><span class="h3">One price, agreed on WhatsApp before you ride.</span></div>
+        <div class="value b"><span class="eyebrow" style="color:var(--odm)">HONEST ABOUT GUIDES</span><span class="h3">I'm your driver. At the big sites I connect you with licensed local guides.</span></div>
+        <div class="value c"><span class="eyebrow">YOUR PACE</span><span class="h3">Stop for photos, tea or a swim. It's your day.</span></div>
+      </div>
+      <span class="note">Only promises that are true today. No licences, insurance or awards are claimed unless the owner adds them.</span>
+    </div>
+  </section>
+
+  <section class="cta"><div class="cta-in"><img src="../src/assets/images/sunset.jpg" alt=""><div class="scrim"></div><div class="c"><p class="eyebrow accent">NICE TO MEET YOU</p><h2>Let's plan your trip.</h2><a class="btn btn-primary" style="min-height:60px;padding:0 32px;font-size:18px" href="#"><svg><use href="#wa"/></svg>WhatsApp +94 [YOUR NUMBER]</a></div></div></section>
+</div>
+
+<div style="height:80px"></div>
+</body>
+</html>

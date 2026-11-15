@@ -1,0 +1,75 @@
+---
+import type { Step } from "@/data/howItWorks";
+import { revealDelay } from "@/lib/motion";
+import FlowConnector from "@/components/ui/FlowConnector.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import StepArt from "@/components/ui/StepArt.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  steps: Step[];
+}
+
+const { id = "how", eyebrow, title, steps } = Astro.props;
+const last = steps.length - 1;
+---
+
+<Section
+  id={id}
+  tone="surface"
+  bordered="both"
+  innerClass="flex flex-col gap-14"
+>
+  <SectionHeading eyebrow={eyebrow} title={title} layout="stack" />
+
+  <ol class="m-0 grid list-none gap-12 p-0 md:grid-cols-3 md:gap-16">
+    {steps.map((step, i) => (
+      <li
+        class:list={[
+          "reveal relative flex gap-5 md:flex-col md:gap-6",
+          revealDelay(i * 2),
+        ]}
+      >
+        <div class="relative shrink-0 self-start">
+          <StepArt name={step.art} class="size-24 md:size-40" />
+          <span
+            aria-hidden="true"
+            class:list={[
+              "absolute -top-3 -left-3 flex size-10 items-center justify-center rounded-full font-mono text-sm ring-4 ring-surface",
+              i === last ? "bg-accent text-ink" : "bg-primary text-ground",
+            ]}
+          >
+            {String(i + 1).padStart(2, "0")}
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-2 md:gap-3.5">
+          <h3 class="m-0 text-2xl font-semibold tracking-subtle">
+            {step.title}
+          </h3>
+          <p class="m-0 text-base leading-relaxed text-body">{step.text}</p>
+        </div>
+
+        {i < last && (
+          <>
+            {/* Desktop: from the right of this illustration to just before the next one. */}
+            <FlowConnector
+              direction="x"
+              step={i}
+              class="top-20 left-44 -right-12 hidden h-7 -translate-y-1/2 md:block"
+            />
+            {/* Phones: from under this illustration down to the next one. */}
+            <FlowConnector
+              direction="y"
+              step={i}
+              class="top-28 -bottom-8 left-12 w-7 -translate-x-1/2 md:hidden"
+            />
+          </>
+        )}
+      </li>
+    ))}
+  </ol>
+</Section>

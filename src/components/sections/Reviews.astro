@@ -1,0 +1,112 @@
+---
+import type { Review } from "@/data/reviews";
+import { realUrl } from "@/lib/format";
+import Container from "@/components/ui/Container.astro";
+import Icon from "@/components/ui/Icon.astro";
+import Postcard, {
+  type PostcardTilt,
+  type PostcardTone,
+} from "@/components/ui/Postcard.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  /** Real reviews only. When empty, a "reviews coming soon" card is shown instead. */
+  reviews: Review[];
+  /** Link to all reviews; hidden while it is a placeholder. */
+  reviewsUrl?: string;
+  allReviewsLabel: string;
+  emptyTitle: string;
+  emptyText: string;
+}
+
+const {
+  id = "reviews",
+  eyebrow,
+  title,
+  reviews,
+  reviewsUrl,
+  allReviewsLabel,
+  emptyTitle,
+  emptyText,
+} = Astro.props;
+const allReviewsHref = reviewsUrl ? realUrl(reviewsUrl) : undefined;
+
+// Card styles cycle in the design's order.
+const looks: { tone: PostcardTone; tilt: PostcardTilt }[] = [
+  { tone: "surface", tilt: "left" },
+  { tone: "primary", tilt: "slight-right" },
+  { tone: "surface", tilt: "slight-left" },
+  { tone: "accent", tilt: "right" },
+];
+const look = (i: number) => looks[i % looks.length]!;
+const captionTone: Record<PostcardTone, string> = {
+  surface: "text-muted",
+  primary: "text-on-dark-muted",
+  accent: "",
+};
+---
+
+<Section id={id} contained={false} innerClass="flex flex-col gap-10">
+  <Container>
+    <SectionHeading
+      eyebrow={eyebrow}
+      title={title}
+      layout="split"
+      titleWidth="none"
+    >
+      {allReviewsHref && (
+        <a
+          href={allReviewsHref}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex min-h-11 items-center gap-2 text-base font-semibold"
+        >
+          {allReviewsLabel}
+          <Icon name="arrow-right" size={16} />
+        </a>
+      )}
+    </SectionHeading>
+  </Container>
+
+  {reviews.length > 0 ? (
+    <div class="box-border snap-x snap-mandatory overflow-x-auto px-gutter pt-1 pb-3">
+      <ul class="m-0 flex w-max list-none gap-5 p-0">
+        {reviews.map((review, i) => (
+          <li class="flex">
+            <Postcard tone={look(i).tone} tilt={look(i).tilt}>
+              <blockquote class="m-0 text-lead leading-normal">
+                “{review.quote}”
+              </blockquote>
+              <figcaption
+                class:list={[
+                  "flex justify-between gap-3 font-mono text-xs",
+                  captionTone[look(i).tone],
+                ]}
+              >
+                <span>{review.name}</span>
+                <span>{review.country}</span>
+              </figcaption>
+            </Postcard>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <Container>
+      <Postcard as="div" tilt="left" class="tone-light">
+        <div class="flex flex-col gap-3">
+          <p class="m-0 font-display text-title-sm leading-title font-extrabold tracking-title">
+            {emptyTitle}
+          </p>
+          <p class="m-0 text-base leading-relaxed text-body">{emptyText}</p>
+        </div>
+        <WhatsAppButton size="sm" class="self-start text-ui" />
+      </Postcard>
+    </Container>
+  )}
+</Section>

@@ -1,0 +1,64 @@
+---
+import Eyebrow from "./Eyebrow.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  /** Light sections use a muted eyebrow; dark sections use marigold. */
+  tone?: "light" | "dark";
+  /** split: intro sits to the right, bottom-aligned. stack: everything in one column. */
+  layout?: "split" | "stack";
+  /** Max width of the title block. */
+  titleWidth?: "md" | "lg" | "none";
+  /** 1 for a page title. */
+  level?: 1 | 2 | 3;
+  /** Display size: h2 (sections), h2-sm (itinerary pages) or h2-xl (driver intro). */
+  size?: "h2" | "h2-sm" | "h2-xl";
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  intro,
+  tone = "light",
+  layout = "split",
+  titleWidth = "md",
+  level = 2,
+  size = "h2",
+  class: className,
+} = Astro.props;
+
+const Heading = `h${level}` as "h1" | "h2" | "h3";
+const widths = { md: "max-w-170", lg: "max-w-190", none: "" };
+const sizes = { h2: "text-h2", "h2-sm": "text-h2-sm", "h2-xl": "text-h2-xl" };
+---
+
+<div
+  class:list={[
+    layout === "split"
+      ? "flex flex-wrap items-end justify-between gap-x-12 gap-y-4"
+      : "flex flex-col gap-4",
+    "reveal",
+    className,
+  ]}
+>
+  <div class:list={["flex flex-col gap-4", widths[titleWidth]]}>
+    <Eyebrow tone={tone === "dark" ? "accent" : "muted"}>{eyebrow}</Eyebrow>
+    <Heading class:list={["m-0 font-display font-extrabold", sizes[size]]}>
+      {title}
+    </Heading>
+  </div>
+  {intro && (
+    <p
+      class:list={[
+        "m-0 max-w-104 text-md leading-copy",
+        tone === "dark" ? "text-on-dark-muted" : "text-body",
+      ]}
+    >
+      {intro}
+    </p>
+  )}
+  <slot />
+</div>

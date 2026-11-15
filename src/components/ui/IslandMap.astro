@@ -1,0 +1,131 @@
+---
+import { mapBase, mapStops, type MapStopId } from "@/data/mapStops";
+
+/**
+ * Stylised map of Sri Lanka (400 × 560 drawing) with a dotted route and one highlighted
+ * leg per day. Presentational only: elements carry data hooks so a parent script can switch
+ * the active day — legs: [data-map-day="i"], stops: [data-map-stop][data-days="0 3"].
+ */
+interface Props {
+  /** Each day's stops, in order. */
+  days: readonly (readonly MapStopId[])[];
+  /** Day shown before any interaction. */
+  activeIndex?: number;
+  /** Show the driver's base ring. */
+  showBase?: boolean;
+  class?: string;
+}
+
+const {
+  days,
+  activeIndex = 0,
+  showBase = true,
+  class: className,
+} = Astro.props;
+
+const point = (id: MapStopId) => mapStops[id];
+const line = (ids: readonly MapStopId[]) =>
+  ids.map((id, i) => `${i ? "L" : "M"}${point(id).x},${point(id).y}`).join(" ");
+
+// Whole trip as one line, without repeating a stop twice in a row.
+const sequence: MapStopId[] = [];
+for (const path of days)
+  for (const id of path) if (sequence.at(-1) !== id) sequence.push(id);
+
+// A day that stays in one place is drawn as a small ring around that stop.
+const leg = (path: readonly MapStopId[]) => {
+  if (path.length > 1) return line(path);
+  const { x, y } = point(path[0]!);
+  return `M${x - 14},${y} a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0`;
+};
+
+// Each stop once, with the days it belongs to.
+const stopDays = new Map<MapStopId, number[]>();
+days.forEach((path, i) =>
+  path.forEach((id) => stopDays.set(id, [...(stopDays.get(id) ?? []), i])),
+);
+
+// Positions as % of the 400 × 560 drawing.
+const at = (x: number, y: number) => `left: ${x / 4}%; top: ${y / 5.6}%`;
+---
+
+<div
+  aria-hidden="true"
+  class:list={["relative mx-auto aspect-5/7 w-full max-w-90", className]}
+>
+  <svg
+    viewBox="0 0 400 560"
+    class="absolute inset-0 block size-full"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M150,20 C175,40 200,90 230,140 C280,210 330,280 345,350 C360,420 330,500 270,530 C220,555 160,545 120,505 C85,470 70,410 72,350 C74,290 90,230 105,170 C115,120 125,60 150,20 Z"
+      class="fill-map-land stroke-map-coast"
+      stroke-width="2"
+    ></path>
+    <ellipse
+      cx="220"
+      cy="410"
+      rx="64"
+      ry="46"
+      class="stroke-map-contour"
+      stroke-width="1.5"
+    ></ellipse>
+    <ellipse
+      cx="220"
+      cy="410"
+      rx="38"
+      ry="27"
+      class="stroke-map-contour"
+      stroke-width="1.5"
+    ></ellipse>
+    <path
+      d={line(sequence)}
+      class="map-march stroke-map-route"
+      stroke-width="2.5"
+      stroke-dasharray="2 7"
+    ></path>
+    {days.map((path, i) => (
+      <path
+        d={leg(path)}
+        data-map-day={i}
+        data-active={i === activeIndex ? "" : undefined}
+        class="stroke-accent opacity-0 transition-opacity duration-400 data-active:opacity-100"
+        stroke-width="5"
+      />
+    ))}
+  </svg>
+
+  {showBase && (
+    <span
+      class="absolute size-3 -translate-1/2 rounded-full border-2 border-accent"
+      style={at(mapBase.x, mapBase.y)}
+    />
+  )}
+
+  {[...stopDays].map(([id, dayIndexes]) => {
+    const stop = point(id);
+    return (
+      <span
+        data-map-stop
+        data-days={dayIndexes.join(" ")}
+        data-active={dayIndexes.includes(activeIndex) ? "" : undefined}
+        class="group absolute size-0"
+        style={at(stop.x, stop.y)}
+      >
+        <span class="absolute top-0 left-0 hidden size-3.5 rounded-full bg-accent group-data-active:block group-data-active:animate-ping-dot motion-reduce:hidden!" />
+        <span class="absolute top-0 left-0 size-2.25 -translate-1/2 rounded-full bg-ground ring-2 ring-primary transition-all duration-300 group-data-active:size-3.5 group-data-active:bg-accent" />
+        <span
+          class:list={[
+            "absolute -top-2 font-mono text-tiny tracking-map whitespace-nowrap text-on-dark-muted transition-colors group-data-active:text-white",
+            stop.side === "right" ? "left-3" : "right-3",
+          ]}
+        >
+          {stop.name}
+        </span>
+      </span>
+    );
+  })}
+</div>

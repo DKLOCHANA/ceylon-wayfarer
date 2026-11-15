@@ -1,0 +1,55 @@
+---
+import { site } from "@/config/site";
+import { creditsPage } from "@/data/photoCredits";
+import { realUrl } from "@/lib/format";
+import { url } from "@/lib/url";
+import Container from "@/components/ui/Container.astro";
+import Logo from "@/components/ui/Logo.astro";
+
+const year = new Date().getFullYear();
+// Only links with a real address are shown; placeholders in site.ts stay hidden until filled.
+const socials = site.socials.flatMap((s) => {
+  const url = realUrl(s.url);
+  return url ? [{ label: s.label, url }] : [];
+});
+---
+
+<footer class="tone-dark bg-deep text-on-dark-muted">
+  <Container class="flex flex-col gap-7 pt-10 pb-12 text-sm">
+    <div class="flex flex-wrap items-center justify-between gap-x-8 gap-y-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <Logo size={40} />
+        <span class="font-semibold text-ground">{site.name}</span>
+        <span>
+          · {site.tagline} · {site.location.town}, {site.location.country}
+        </span>
+      </div>
+      {socials.length > 0 && (
+        <nav
+          aria-label={site.ui.socialNavLabel}
+          class="flex flex-wrap gap-x-6 gap-y-2"
+        >
+          {socials.map((s) => (
+            <a
+              href={s.url}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex min-h-11 items-center text-on-dark-body hover:text-accent"
+            >
+              {s.label}
+            </a>
+          ))}
+        </nav>
+      )}
+      <span>
+        © {year} {site.name} ·{" "}
+        <a
+          href={url(creditsPage.path)}
+          class="inline-flex min-h-11 items-center text-on-dark-body hover:text-accent"
+        >
+          {creditsPage.linkLabel}
+        </a>
+      </span>
+    </div>
+  </Container>
+</footer>

@@ -1,0 +1,48 @@
+---
+import type { GalleryTile } from "@/data/gallery";
+import { revealDelay } from "@/lib/motion";
+import Container from "@/components/ui/Container.astro";
+import PhotoTile from "@/components/ui/PhotoTile.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  tiles: GalleryTile[];
+}
+
+const { id = "island", eyebrow, title, intro, tiles } = Astro.props;
+---
+
+<Section id={id} tone="ink" contained={false} innerClass="flex flex-col gap-12">
+  <Container>
+    <SectionHeading
+      eyebrow={eyebrow}
+      title={title}
+      intro={intro}
+      tone="dark"
+      titleWidth="lg"
+    />
+  </Container>
+
+  <!-- Full-bleed collage: edge to edge, no side margins. -->
+  <div class="grid grid-flow-row-dense auto-rows-(--spacing-bento-row-sm) grid-cols-2 gap-4 lg:auto-rows-(--spacing-bento-row) lg:grid-cols-4">
+    {tiles.map((tile, i) => (
+      <PhotoTile
+        image={tile.image}
+        alt={tile.alt}
+        caption={tile.caption}
+        span={tile.span}
+        class={revealDelay(i % 4)}
+        sizes={
+          tile.span === "wide"
+            ? "(min-width: 1024px) 50vw, 100vw"
+            : "(min-width: 1024px) 25vw, 50vw"
+        }
+      />
+    ))}
+  </div>
+</Section>

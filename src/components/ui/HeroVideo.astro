@@ -1,0 +1,95 @@
+---
+import { url } from "@/lib/url";
+
+/**
+ * Background video layered over a hero photo. The photo stays the fast first paint;
+ * the video downloads only after the page has loaded and the browser is idle, then fades in.
+ * Skipped for reduced motion, data saver, slow connections and (by default) phones.
+ * Pauses while off-screen. Marks its nearest [data-hero] ancestor with data-video="on"
+ * so the photo's Ken Burns zoom can stop.
+ */
+interface Props {
+  /** MP4 (H.264) file under /public, e.g. "/videos/hero.mp4". */
+  src: string;
+  /** Optional WebM version, offered first when given. */
+  webm?: string;
+  /** Also play on screens narrower than 768px. */
+  playOnPhones?: boolean;
+  class?: string;
+}
+
+const { src, webm, playOnPhones = false, class: className } = Astro.props;
+---
+
+<video
+  data-hero-video
+  data-src={url(src)}
+  data-webm={webm && url(webm)}
+  data-phones={playOnPhones ? "" : undefined}
+  muted
+  loop
+  playsinline
+  preload="none"
+  aria-hidden="true"
+  tabindex="-1"
+  disablepictureinpicture
+  class:list={[
+    "pointer-events-none absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-1000 data-playing:opacity-100",
+    className,
+  ]}
+></video>
+
+<script>
+  type Connection = { saveData?: boolean; effectiveType?: string };
+
+  for (const video of document.querySelectorAll<HTMLVideoElement>(
+    "[data-hero-video]",
+  )) {
+    const conn = (navigator as Navigator & { connection?: Connection })
+      .connection;
+    const skip =
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      conn?.saveData === true ||
+      /(^|-)2g|3g/.test(conn?.effectiveType ?? "") ||
+      (!("phones" in video.dataset) &&
+        matchMedia("(max-width: 767px)").matches);
+    if (skip) continue;
+
+    const host = video.closest<HTMLElement>("[data-hero]");
+
+    const start = () => {
+      const sources: [string | undefined, string][] = [
+        [video.dataset.webm, "video/webm"],
+        [video.dataset.src, "video/mp4"],
+      ];
+      for (const [url, type] of sources) {
+        if (!url) continue;
+        const s = document.createElement("source");
+        s.src = url;
+        s.type = type;
+        video.append(s);
+      }
+      video.addEventListener(
+        "playing",
+        () => {
+          video.toggleAttribute("data-playing", true);
+          host?.setAttribute("data-video", "on");
+        },
+        { once: true },
+      );
+      video.load();
+      // Play only while the hero is on screen.
+      new IntersectionObserver(([entry]) => {
+        if (entry?.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      }).observe(video);
+    };
+
+    const whenIdle = () =>
+      "requestIdleCallback" in window
+        ? requestIdleCallback(start, { timeout: 2500 })
+        : setTimeout(start, 1500);
+    if (document.readyState === "complete") whenIdle();
+    else addEventListener("load", whenIdle, { once: true });
+  }
+</script>

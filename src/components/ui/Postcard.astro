@@ -1,0 +1,46 @@
+---
+import type { HTMLTag } from "astro/types";
+
+export type PostcardTone = "surface" | "primary" | "accent";
+export type PostcardTilt =
+  "left" | "right" | "slight-left" | "slight-right" | "none";
+
+interface Props {
+  tone?: PostcardTone;
+  tilt?: PostcardTilt;
+  as?: HTMLTag;
+  class?: string;
+}
+
+const {
+  tone = "surface",
+  tilt = "none",
+  as: Tag = "figure",
+  class: className,
+} = Astro.props;
+
+const tones: Record<PostcardTone, string> = {
+  surface: "border border-line bg-surface text-ink",
+  primary: "tone-dark bg-primary text-ground",
+  accent: "bg-accent text-ink",
+};
+
+const tilts: Record<PostcardTilt, string> = {
+  left: "-rotate-[1.2deg]",
+  "slight-left": "-rotate-[0.6deg]",
+  right: "rotate-[1.1deg]",
+  "slight-right": "rotate-[0.8deg]",
+  none: "",
+};
+---
+
+<Tag
+  class:list={[
+    "reveal m-0 box-border flex w-postcard shrink-0 snap-start flex-col justify-between gap-6 rounded-tile p-7",
+    tones[tone],
+    tilts[tilt],
+    className,
+  ]}
+>
+  <slot />
+</Tag>

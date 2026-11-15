@@ -1,0 +1,56 @@
+---
+import type { HTMLAttributes, HTMLTag } from "astro/types";
+
+export type ChipVariant = "light" | "glass" | "frost" | "photo" | "accent";
+
+interface Props extends Omit<HTMLAttributes<"span">, "class"> {
+  /**
+   * light: white pill with border (on light backgrounds).
+   * glass: dark frosted caption on photos. frost: pale frosted mono label on photos.
+   * photo: pale frosted text pill on photos. accent: marigold pill.
+   */
+  variant?: ChipVariant;
+  /** sm: compact (photo-tile captions, highlight tags, card labels). md: default. */
+  size?: "sm" | "md";
+  as?: HTMLTag;
+  class?: string;
+}
+
+const {
+  variant = "light",
+  size = "md",
+  as: Tag = "span",
+  class: className,
+  ...rest
+} = Astro.props;
+
+const styles: Record<ChipVariant, string> = {
+  light:
+    size === "sm"
+      ? "border border-line bg-surface px-3 py-1.5 text-caption font-medium text-ink"
+      : "border border-line bg-surface px-4 py-2.5 text-ui font-medium text-ink",
+  glass:
+    size === "sm"
+      ? "bg-glass/60 px-3 py-1.75 font-mono text-tiny tracking-label-sm text-white backdrop-blur-sm"
+      : "bg-glass/45 px-3.5 py-2 font-mono text-xs tracking-label-sm text-white backdrop-blur-chip",
+  frost:
+    "border border-white/22 bg-white/14 px-3.5 py-2 font-mono text-xs tracking-label text-white backdrop-blur-chip",
+  photo:
+    "gap-1 border border-white/22 bg-white/14 px-4 py-2.5 text-ui text-white backdrop-blur-chip",
+  accent:
+    size === "sm"
+      ? "bg-accent px-3 py-1.75 font-mono text-tiny tracking-label-sm text-ink"
+      : "bg-accent px-4 py-2.5 text-ui font-semibold text-ink",
+};
+---
+
+<Tag
+  class:list={[
+    "inline-flex items-center rounded-full",
+    styles[variant],
+    className,
+  ]}
+  {...rest}
+>
+  <slot />
+</Tag>

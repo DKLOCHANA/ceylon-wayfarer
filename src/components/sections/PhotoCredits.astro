@@ -1,0 +1,50 @@
+---
+import type { PhotoCredit } from "@/data/photoCredits";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  credits: PhotoCredit[];
+  /** Licence name → licence URL. */
+  licenceUrls: Record<string, string>;
+  sourceNote: string;
+}
+
+const { eyebrow, title, intro, credits, licenceUrls, sourceNote } = Astro.props;
+---
+
+<Section innerClass="flex max-w-3xl flex-col gap-10 pt-16 md:pt-20">
+  <SectionHeading
+    eyebrow={eyebrow}
+    title={title}
+    intro={intro}
+    layout="stack"
+    size="h2-sm"
+    level={1}
+  />
+  <ul class="m-0 flex list-none flex-col p-0">
+    {credits.map((c) => (
+      <li class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-line py-4">
+        <span class="font-semibold">{c.subject}</span>
+        <span class="text-sm text-body">
+          {c.author}, {sourceNote} ·{" "}
+          {licenceUrls[c.licence] ? (
+            <a
+              href={licenceUrls[c.licence]}
+              target="_blank"
+              rel="noopener license"
+              class="inline-flex min-h-11 items-center"
+            >
+              {c.licence}
+            </a>
+          ) : (
+            c.licence
+          )}
+        </span>
+      </li>
+    ))}
+  </ul>
+</Section>

@@ -1,0 +1,26 @@
+---
+import Eyebrow from "./Eyebrow.astro";
+
+/** Small card with a mono label and a bold value (van specs, route facts). */
+interface Props {
+  label: string;
+  value: string;
+  class?: string;
+}
+
+const { label, value, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex flex-col gap-2.5 rounded-card border border-line bg-surface p-5",
+    className,
+  ]}
+>
+  <Eyebrow as="span" size="tiny">
+    {label}
+  </Eyebrow>
+  <span class="font-display text-2xl leading-title font-extrabold tracking-title">
+    {value}
+  </span>
+</div>

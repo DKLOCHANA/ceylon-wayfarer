@@ -1,0 +1,25 @@
+---
+interface Props {
+  /** Instructions for the photo to supply; newlines are kept. */
+  text: string;
+  /** light: dashed box on light ground. dark: brand-green box. */
+  tone?: "light" | "dark";
+  class?: string;
+}
+
+const { text, tone = "light", class: className } = Astro.props;
+---
+
+<div
+  role="img"
+  aria-label={text.replace(/\n/g, " ")}
+  class:list={[
+    "box-border flex items-center justify-center text-center font-mono whitespace-pre-line",
+    tone === "light"
+      ? "rounded-stage border-2 border-dashed border-placeholder-line bg-placeholder p-8 text-caption leading-fine text-muted"
+      : "rounded-ticket bg-primary p-4 text-xs leading-relaxed text-on-dark-muted",
+    className,
+  ]}
+>
+  {text}
+</div>

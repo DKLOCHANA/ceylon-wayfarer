@@ -1,0 +1,240 @@
+---
+import type { MapStopId } from "@/data/mapStops";
+import type { Photo } from "@/data/photos";
+import DayCard from "@/components/ui/DayCard.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Icon from "@/components/ui/Icon.astro";
+import IslandMap from "@/components/ui/IslandMap.astro";
+import PhotoTile from "@/components/ui/PhotoTile.astro";
+import Ticket from "@/components/ui/Ticket.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+export interface PlannerDay {
+  day: string;
+  title: string;
+  /** "160 KM · ≈ 4 H DRIVE" (day list) */
+  meta: string;
+  /** "160 KM · ≈ 4 H" (under the map) */
+  mapMeta: string;
+  highlights: string[];
+  description: string;
+  tip: string;
+  nightLabel: string;
+  path: readonly MapStopId[];
+  photo: Photo;
+}
+
+interface Copy {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  dayLabel: string;
+  tipLabel: string;
+  onTheMap: string;
+  previousDay: string;
+  nextDay: string;
+  baseLabel: string;
+}
+
+interface Booking {
+  label: string;
+  price: string;
+  guests: string;
+  included: string;
+  notIncluded: string;
+  cta: string;
+  note: string;
+  /** Prefilled WhatsApp message naming the itinerary. */
+  message: string;
+}
+
+interface Props {
+  id?: string;
+  copy: Copy;
+  days: PlannerDay[];
+  booking: Booking;
+}
+
+const { id = "plan", copy, days, booking } = Astro.props;
+const group = `${id}-days`;
+---
+
+<section
+  id={id}
+  data-itinerary
+  class="mx-auto box-border flex max-w-7xl flex-wrap items-start gap-12 px-gutter pt-18 pb-24"
+>
+  <!-- Day by day -->
+  <div class="flex min-w-0 grow basis-130 flex-col gap-7">
+    <div class="reveal flex flex-col gap-3">
+      <Eyebrow>{copy.eyebrow}</Eyebrow>
+      <h2 class="m-0 font-display text-h2-sm font-extrabold">{copy.title}</h2>
+      <p class="m-0 text-base leading-copy text-body">{copy.intro}</p>
+    </div>
+    <ol class="m-0 flex list-none flex-col gap-3 p-0">
+      {days.map((d, i) => (
+        <li>
+          <DayCard
+            index={i}
+            group={group}
+            open={i === 0}
+            dayLabel={copy.dayLabel}
+            day={d.day}
+            title={d.title}
+            meta={d.meta}
+            highlights={d.highlights}
+            description={d.description}
+            tipLabel={copy.tipLabel}
+            tip={d.tip}
+            nightLabel={d.nightLabel}
+          />
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <!-- Map, photo and price follow the selected day -->
+  <aside class="flex min-w-0 grow basis-100 flex-col gap-4 self-start lg:sticky lg:top-6">
+    <div class="tone-dark flex flex-col gap-4 rounded-stage bg-primary p-5.5 text-ground">
+      <div class="flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          {days.map((d, i) => (
+            <div
+              data-day-panel
+              data-i={i}
+              hidden={i !== 0}
+              class="flex animate-pop flex-col gap-1"
+            >
+              <Eyebrow as="span" size="tiny" tone="accent">
+                {`${copy.dayLabel} ${d.day} ${copy.onTheMap}`}
+              </Eyebrow>
+              <span class="font-display text-title-xs leading-title font-extrabold tracking-title">
+                {d.title}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div data-day-controls hidden class="flex shrink-0 gap-2">
+          <button
+            type="button"
+            data-day-prev
+            aria-label={copy.previousDay}
+            class="flex size-11 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-map-control text-ground transition hover:bg-white/10 disabled:cursor-default disabled:opacity-40"
+          >
+            <Icon name="chevron-left" />
+          </button>
+          <button
+            type="button"
+            data-day-next
+            aria-label={copy.nextDay}
+            class="flex size-11 cursor-pointer items-center justify-center rounded-full bg-accent text-ink transition hover:bg-accent/90 disabled:cursor-default disabled:opacity-40"
+          >
+            <Icon name="chevron-right" />
+          </button>
+        </div>
+      </div>
+
+      <IslandMap days={days.map((d) => d.path)} />
+
+      <div class="flex flex-wrap justify-between gap-2 font-mono text-tiny tracking-label-xs text-on-dark-muted">
+        {days.map((d, i) => (
+          <span data-day-panel data-i={i} hidden={i !== 0}>
+            {d.mapMeta}
+          </span>
+        ))}
+        <span class="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden="true"
+            class="size-2.5 rounded-full border-2 border-accent"
+          ></span>
+          {copy.baseLabel}
+        </span>
+      </div>
+    </div>
+
+    {days.map((d, i) => (
+      <div data-day-panel data-i={i} hidden={i !== 0}>
+        <PhotoTile
+          image={d.photo.image}
+          alt={d.photo.alt}
+          caption={d.photo.caption}
+          sizes="(min-width: 1024px) 560px, 100vw"
+          class="aspect-video"
+        />
+      </div>
+    ))}
+
+    <div id="book">
+      <Ticket label={booking.label} width="full" tone="surface">
+        <div slot="top" class="flex items-baseline justify-between gap-3">
+          <span class="font-display text-3xl font-extrabold tracking-title">
+            {booking.price}
+          </span>
+          <span class="text-sm text-body">{booking.guests}</span>
+        </div>
+        <Fragment slot="bottom">
+          <ul class="m-0 flex list-none flex-col gap-2 p-0 text-sm text-body">
+            <li>{booking.included}</li>
+            <li>{booking.notIncluded}</li>
+          </ul>
+          <WhatsAppButton message={booking.message} fullWidth>
+            {booking.cta}
+          </WhatsAppButton>
+          <span class="text-center text-caption text-muted">
+            {booking.note}
+          </span>
+        </Fragment>
+      </Ticket>
+    </div>
+  </aside>
+</section>
+
+<script>
+  // Keeps the map, its caption, the day photo and the prev/next buttons in step with the open day.
+  // Without JS the days still open and close (native <details>); the map shows day 1.
+  for (const root of document.querySelectorAll<HTMLElement>(
+    "[data-itinerary]",
+  )) {
+    const days = [...root.querySelectorAll<HTMLDetailsElement>("[data-day]")];
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-day-panel]")];
+    const legs = [...root.querySelectorAll<SVGElement>("[data-map-day]")];
+    const stops = [...root.querySelectorAll<HTMLElement>("[data-map-stop]")];
+    const controls = root.querySelector<HTMLElement>("[data-day-controls]");
+    const prev = root.querySelector<HTMLButtonElement>("[data-day-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-day-next]");
+    let current = 0;
+
+    const show = (i: number) => {
+      current = i;
+      for (const p of panels) p.hidden = Number(p.dataset.i) !== i;
+      for (const l of legs)
+        l.toggleAttribute("data-active", Number(l.dataset.mapDay) === i);
+      for (const s of stops)
+        s.toggleAttribute(
+          "data-active",
+          (s.dataset.days ?? "").split(" ").includes(String(i)),
+        );
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === days.length - 1;
+    };
+
+    const open = (i: number) => {
+      days.forEach((d, j) => (d.open = j === i));
+      show(i);
+    };
+
+    days.forEach((d, i) =>
+      d.addEventListener("toggle", () => d.open && i !== current && show(i)),
+    );
+    prev?.addEventListener("click", () => current > 0 && open(current - 1));
+    next?.addEventListener(
+      "click",
+      () => current < days.length - 1 && open(current + 1),
+    );
+
+    if (controls) controls.hidden = false;
+    show(
+      days.findIndex((d) => d.open) === -1 ? 0 : days.findIndex((d) => d.open),
+    );
+  }
+</script>

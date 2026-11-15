@@ -1,0 +1,98 @@
+---
+import type { ImageMetadata } from "astro";
+import "@fontsource/bricolage-grotesque/latin-700.css";
+import "@fontsource/bricolage-grotesque/latin-800.css";
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
+import "@fontsource/dm-mono/latin-400.css";
+import "@fontsource/dm-mono/latin-500.css";
+import "@/styles/global.css";
+import displayFont from "@fontsource/bricolage-grotesque/files/bricolage-grotesque-latin-800-normal.woff2?url";
+import bodyFont from "@fontsource/inter/files/inter-latin-400-normal.woff2?url";
+import { site } from "@/config/site";
+import { url } from "@/lib/url";
+import Seo from "@/components/seo/Seo.astro";
+import LocalBusinessSchema from "@/components/seo/LocalBusinessSchema.astro";
+import Header from "@/components/layout/Header.astro";
+import Footer from "@/components/layout/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  /** overlay on pages that start with a full-bleed hero; solid elsewhere. */
+  headerVariant?: "overlay" | "solid";
+  ogImage?: ImageMetadata;
+  ogImageAlt?: string;
+  /** Adds the LocalBusiness JSON-LD (home page). */
+  businessSchema?: boolean;
+}
+
+const {
+  title,
+  description,
+  headerVariant = "solid",
+  ogImage,
+  ogImageAlt,
+  businessSchema = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0E2A24" />
+    <link
+      rel="icon"
+      href={url("/favicon-32.png")}
+      type="image/png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      href={url("/favicon-512.png")}
+      type="image/png"
+      sizes="512x512"
+    />
+    <link rel="apple-touch-icon" href={url("/apple-touch-icon.png")} />
+    <link rel="sitemap" href={url("/sitemap-index.xml")} />
+    <link
+      rel="preload"
+      href={displayFont}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href={bodyFont}
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <Seo
+      title={title}
+      description={description}
+      image={ogImage}
+      imageAlt={ogImageAlt}
+    />
+    {businessSchema && <LocalBusinessSchema />}
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-full bg-accent px-5 py-3 font-semibold text-ink focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+    >
+      {site.ui.skipLink}
+    </a>
+    <div class="relative">
+      <Header variant={headerVariant} />
+      <main id="main">
+        <slot />
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,113 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ItineraryHero from "@/components/sections/itinerary/ItineraryHero.astro";
+import ItineraryPlanner from "@/components/sections/itinerary/ItineraryPlanner.astro";
+import ItineraryGrid from "@/components/sections/itinerary/ItineraryGrid.astro";
+import { site } from "@/config/site";
+import { itineraryPage as copy } from "@/data/itineraryPage";
+import { getPhoto } from "@/data/photos";
+import { formatPrice, tripPrice } from "@/lib/format";
+import {
+  dayMeta,
+  dayPhoto,
+  formatDriveTime,
+  itineraryHref,
+  nightLabel,
+  splitBestMonths,
+  tripMeta,
+} from "@/lib/itinerary";
+
+export const getStaticPaths = (async () => {
+  const all = (await getCollection("itineraries")).sort(
+    (a, b) => a.data.order - b.data.order,
+  );
+  return all.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, all },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  entry: CollectionEntry<"itineraries">;
+  all: CollectionEntry<"itineraries">[];
+}
+
+const { entry, all } = Astro.props;
+const trip = entry.data;
+const hero = getPhoto(trip.heroImage);
+const best = splitBestMonths(trip.bestMonths);
+
+const days = trip.itinerary.map((d) => ({
+  day: d.day,
+  title: d.title,
+  meta: dayMeta(d),
+  mapMeta: `${d.distanceKm} KM · ${formatDriveTime(d.driveTime)}`,
+  highlights: d.highlights,
+  description: d.description,
+  tip: d.tip,
+  nightLabel: nightLabel(d),
+  path: d.path,
+  photo: dayPhoto(d, trip),
+}));
+
+const others = all
+  .filter((o) => o.id !== entry.id)
+  .map((o) => {
+    const photo = getPhoto(o.data.heroImage);
+    return {
+      href: itineraryHref(o.id),
+      image: photo.image,
+      alt: photo.alt,
+      meta: tripMeta(o.data),
+      title: o.data.title,
+      summary: o.data.summary,
+    };
+  });
+---
+
+<BaseLayout
+  title={copy.seoTitle(trip.title)}
+  description={trip.summary}
+  headerVariant="overlay"
+  ogImage={hero.image}
+  ogImageAlt={hero.alt}
+>
+  <ItineraryHero
+    image={hero.image}
+    imageAlt={hero.alt}
+    breadcrumb={{
+      label: copy.breadcrumbLabel,
+      current: `${trip.days} ${copy.daysLabel}`,
+    }}
+    title={trip.title}
+    summary={trip.summary}
+    days={trip.days}
+    nights={trip.nights}
+    distanceKm={trip.totalDistanceKm}
+    endpoints={
+      trip.start === "BIA" && trip.end === "BIA"
+        ? copy.airportToAirport
+        : undefined
+    }
+    best={`${copy.bestPrefix} ${best.short}`}
+  />
+  <ItineraryPlanner
+    copy={copy.planner}
+    days={days}
+    booking={{
+      ...copy.booking,
+      label: `${copy.booking.label} · ${trip.days} ${copy.daysLabel}`,
+      price: formatPrice(tripPrice(trip.totalDistanceKm, trip.days)),
+      message: site.messages.itinerary(trip.title),
+    }}
+  />
+  <ItineraryGrid
+    eyebrow={copy.more.eyebrow}
+    title={copy.more.title}
+    cards={others}
+    cta={copy.more.cta}
+    divider
+  />
+</BaseLayout>

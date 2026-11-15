@@ -1,0 +1,702 @@
+@import "tailwindcss";
+
+/*
+ * Brand tokens — palette "Tea & Marigold".
+ * The default Tailwind palette is cleared so components can only use brand colours.
+ */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-ink: #0e2a24;
+  --color-deep: #0a201b;
+  --color-primary: #12463a;
+  --color-ground: #f5f6f1;
+  --color-surface: #ffffff;
+  --color-body: #3b504a;
+  --color-muted: #4a5f58;
+  --color-line: #dce1da;
+  --color-dash: #c9d0c6;
+  --color-on-dark-muted: #b9ccc4;
+  --color-on-dark-body: #dde7e2;
+  --color-on-photo: #e7efeb;
+  --color-accent: #f2a93b;
+  --color-placeholder: #e9ede6;
+  --color-placeholder-line: #9db3aa;
+  --color-fine: #8fa79d;
+  --color-fine-line: #1e3b34;
+  /* Itinerary map (island on brand green). */
+  --color-map-land: #1b5a4a;
+  --color-map-coast: #3e8572;
+  --color-map-contour: #2a6e5e;
+  --color-map-route: #7fa99a;
+  --color-map-control: #5e8f80;
+  /* Tip call-out (warm note on light backgrounds). */
+  --color-tip: #fff6e6;
+  --color-tip-line: #f3d9a6;
+  --color-tip-icon: #8a5a10;
+  --color-tip-text: #5a3e0c;
+  /* Base colours for overlays; always used with an opacity modifier (bg-scrim/60, bg-glass/45). */
+  --color-scrim: rgb(10 32 27);
+  --color-glass: rgb(14 42 36);
+
+  --font-*: initial;
+  --font-display: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Type scale (sizes used by the design that Tailwind's default scale lacks). */
+  --text-nano: 0.5625rem; /* 9px */
+  --text-micro: 0.625rem; /* 10px */
+  --text-tiny: 0.6875rem; /* 11px */
+  --text-caption: 0.8125rem; /* 13px */
+  --text-ui: 0.9375rem; /* 15px */
+  --text-md: 1.0625rem; /* 17px */
+  --text-lead: 1.1875rem; /* 19px */
+  --text-title-xs: 1.375rem; /* 22px */
+  --text-title-sm: 1.625rem; /* 26px */
+  --text-title: 1.75rem; /* 28px */
+
+  /* Display sizes, bundled with their line height and tracking. */
+  --text-hero: clamp(3.25rem, 8.4vw, 7.75rem);
+  --text-hero--line-height: 0.9;
+  --text-hero--letter-spacing: -0.045em;
+  --text-display: clamp(3rem, 7.5vw, 7rem);
+  --text-display--line-height: 0.9;
+  --text-display--letter-spacing: -0.045em;
+  --text-h2-sm: clamp(2.25rem, 4vw, 3.5rem);
+  --text-h2-sm--line-height: 0.95;
+  --text-h2-sm--letter-spacing: -0.035em;
+  --text-h2: clamp(2.5rem, 5vw, 4.5rem);
+  --text-h2--line-height: 0.95;
+  --text-h2--letter-spacing: -0.04em;
+  --text-h2-xl: clamp(2.75rem, 5.5vw, 5rem);
+  --text-h2-xl--line-height: 0.92;
+  --text-h2-xl--letter-spacing: -0.04em;
+  --text-stage: clamp(2rem, 4vw, 3.25rem);
+  --text-stage--line-height: 1;
+  --text-stage--letter-spacing: -0.03em;
+  --text-cta: clamp(3.75rem, 10vw, 9.5rem);
+  --text-cta--line-height: 0.88;
+  --text-cta--letter-spacing: -0.05em;
+
+  --tracking-label: 0.14em;
+  --tracking-label-sm: 0.12em;
+  --tracking-label-xs: 0.1em;
+  --tracking-meta: 0.08em;
+  --tracking-map: 0.06em;
+  --tracking-title: -0.02em;
+  --tracking-subtle: -0.01em;
+
+  --leading-title: 1.05;
+  --leading-tile: 1.02;
+  --leading-relaxed: 1.6;
+  --leading-fine: 1.7;
+  --leading-copy: 1.55;
+
+  --radius-card: 1.25rem; /* 20px */
+  --radius-ticket: 1.375rem; /* 22px */
+  --radius-tile: 1.5rem; /* 24px */
+  --radius-stage: 1.75rem; /* 28px */
+  --radius-frame: 2rem; /* 32px */
+
+  /* Max width of the big itinerary title. */
+  --container-title: 14ch;
+
+  --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
+  --spacing-hero-pad: clamp(1.25rem, 4vw, 3.5rem);
+  --spacing-hero: 51.25rem; /* 820px hero frame */
+  --spacing-cta: 40rem; /* 640px booking frame */
+  --spacing-bento-row: 15.625rem; /* 250px */
+  --spacing-bento-row-sm: 11.875rem; /* 190px */
+  --spacing-postcard: min(25rem, 82vw);
+
+  --shadow-ticket: 0 24px 60px rgb(0 0 0 / 0.28);
+  --shadow-lift: 0 12px 28px rgb(0 0 0 / 0.18);
+
+  --blur-chip: 10px;
+  --blur-nav: 14px;
+
+  --ease-zoom: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --animate-marquee: marquee 48s linear infinite;
+  --animate-ken-burns: ken-burns 24s ease-in-out infinite alternate;
+  /* Route picker progress bar; duration matches the 5 s auto-advance. */
+  --animate-progress: progress 5s linear forwards;
+  /* Entrance & ambient motion. */
+  --animate-drop: drop 0.9s var(--ease-zoom) 0.1s both;
+  --animate-float: float 7s ease-in-out 1.6s infinite;
+  --animate-settle: settle 6s ease-out both;
+  --animate-pop: rise 0.6s var(--ease-zoom) both;
+  /* Pulse ring around the active stop on the itinerary map. */
+  --animate-ping-dot: ping-dot 1.8s ease-out infinite;
+
+  @keyframes ping-dot {
+    from {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 0.7;
+    }
+    to {
+      transform: translate(-50%, -50%) scale(2.6);
+      opacity: 0;
+    }
+  }
+
+  /* Starts faintly visible, not at 0: hero text is the page's main content (LCP) and must paint at once. */
+  @keyframes rise {
+    from {
+      opacity: 0.15;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes drop {
+    from {
+      opacity: 0;
+      transform: translateY(-1.25rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* No opacity: 0 here — the headline is the page's main content (LCP) and must paint at once. */
+  @keyframes word-in {
+    from {
+      opacity: 0.35;
+      transform: translateY(0.45em) rotate(3deg);
+      filter: blur(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  @keyframes settle {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(2.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes reveal-zoom {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes reveal-side {
+    from {
+      opacity: 0;
+      transform: translateX(-3rem) rotate(-2deg);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes ken-burns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.08);
+    }
+  }
+}
+
+/* Photo overlays (scrim gradients from the design). */
+@utility scrim-hero {
+  background: linear-gradient(
+    180deg,
+    --alpha(var(--color-scrim) / 45%) 0%,
+    --alpha(var(--color-scrim) / 0%) 28%,
+    --alpha(var(--color-scrim) / 0%) 42%,
+    --alpha(var(--color-scrim) / 82%) 100%
+  );
+}
+
+/* Hero over video: darker at the bottom-left, where the headline sits, so moving footage never fights the text. */
+@utility scrim-hero-video {
+  background:
+    linear-gradient(
+      180deg,
+      --alpha(var(--color-scrim) / 50%) 0%,
+      --alpha(var(--color-scrim) / 10%) 26%,
+      --alpha(var(--color-scrim) / 20%) 45%,
+      --alpha(var(--color-scrim) / 88%) 100%
+    ),
+    radial-gradient(
+      ellipse 70% 60% at 20% 85%,
+      --alpha(var(--color-scrim) / 45%) 0%,
+      --alpha(var(--color-scrim) / 0%) 70%
+    );
+}
+
+@utility scrim-stage {
+  background: linear-gradient(
+    180deg,
+    --alpha(var(--color-scrim) / 35%) 0%,
+    --alpha(var(--color-scrim) / 0%) 30%,
+    --alpha(var(--color-scrim) / 0%) 50%,
+    --alpha(var(--color-scrim) / 70%) 100%
+  );
+}
+
+/*
+ * Motion. All hidden states live only inside keyframes, so with reduced motion (animation: none)
+ * or without scroll-timeline support everything is simply visible.
+ */
+
+/* Page-load entrance, staggered: enter-0, enter-1, ... (each step 120 ms later). */
+@utility enter-* {
+  animation: rise 0.9s var(--ease-zoom) both;
+  animation-delay: calc(--value(integer) * 120ms + 150ms);
+}
+
+/* Hero headline words; set --i on each word for the stagger. */
+@utility word-in {
+  display: inline-block;
+  animation: word-in 0.9s var(--ease-zoom) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 250ms);
+}
+
+/* Scroll-driven reveals (CSS only, no JS). reveal-1..4 start a little later for in-row stagger. */
+@utility reveal {
+  @supports (animation-timeline: view()) {
+    /* Longhands on purpose: minifiers fold a timeline into the shorthand, which browsers reject. */
+    animation-name: reveal;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry calc(var(--reveal-offset, 0) * 6%) cover
+      calc(30% + var(--reveal-offset, 0) * 6%);
+  }
+}
+
+@utility reveal-zoom {
+  @supports (animation-timeline: view()) {
+    /* Longhands on purpose: minifiers fold a timeline into the shorthand, which browsers reject. */
+    animation-name: reveal-zoom;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry calc(var(--reveal-offset, 0) * 6%) cover
+      calc(30% + var(--reveal-offset, 0) * 6%);
+  }
+}
+
+@utility reveal-side {
+  @supports (animation-timeline: view()) {
+    /* Longhands on purpose: minifiers fold a timeline into the shorthand, which browsers reject. */
+    animation-name: reveal-side;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry calc(var(--reveal-offset, 0) * 6%) cover
+      calc(35% + var(--reveal-offset, 0) * 6%);
+  }
+}
+
+@utility reveal-delay-* {
+  --reveal-offset: --value(integer);
+}
+
+/* Icon strokes that draw themselves as they scroll in (paths need pathLength="1"). */
+@utility draw-stroke {
+  & path[pathLength] {
+    stroke-dasharray: 1;
+    @supports (animation-timeline: view()) {
+      animation-name: draw-stroke;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+  }
+}
+
+@keyframes draw-stroke {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Dashed connector that draws itself as it scrolls in. */
+@utility draw-in {
+  transform-origin: left center;
+  @supports (animation-timeline: view()) {
+    /* Longhands on purpose: minifiers fold a timeline into the shorthand, which browsers reject. */
+    animation-name: draw;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 50%;
+  }
+}
+
+@utility pause-on-hover {
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * Step illustrations (How it works). Small looping motions inside inline SVGs.
+ * fill-box makes transform-origin relative to each shape, not the whole SVG.
+ */
+@utility art-typing {
+  transform-box: fill-box;
+  animation: art-typing 1.2s ease-in-out infinite;
+}
+
+@utility art-hop {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: art-hop 2.2s ease-in-out infinite;
+}
+
+@utility art-swing {
+  transform-box: fill-box;
+  /* The tag hangs from its hole, ~15% from the left edge. */
+  transform-origin: 15% 50%;
+  animation: art-swing 3.2s ease-in-out infinite;
+}
+
+@utility art-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-pop 3.2s ease-in-out infinite;
+}
+
+@utility art-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-pulse 2.6s ease-in-out infinite alternate;
+}
+
+@utility art-bob {
+  transform-box: fill-box;
+  animation: art-bob 0.4s ease-in-out infinite alternate;
+}
+
+@utility art-road {
+  animation: art-road 0.7s linear infinite;
+}
+
+@utility art-speed {
+  transform-box: fill-box;
+  animation: art-speed 0.7s ease-in-out infinite;
+}
+
+@utility art-delay-* {
+  animation-delay: calc(--value(integer) * 150ms);
+}
+
+@keyframes art-typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@keyframes art-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes art-swing {
+  0%,
+  100% {
+    transform: rotate(-7deg);
+  }
+  50% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes art-pop {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes art-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes art-bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes art-road {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 20;
+  }
+}
+
+@keyframes art-speed {
+  0% {
+    transform: translateX(4px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-6px);
+    opacity: 0;
+  }
+}
+
+/*
+ * Flow connector between steps: a marching dotted line plus an arrow that runs along it.
+ * Each connector's arrow runs for half the cycle, so with flow-step-1 on the second
+ * connector the arrow appears to travel 1 → 2 → 3. With reduced motion the arrow rests at the end.
+ */
+@utility flow-dash-x {
+  background-image: linear-gradient(
+    90deg,
+    --alpha(var(--color-primary) / 40%) 0 50%,
+    transparent 0 100%
+  );
+  background-size: 16px 2px;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  animation: flow-march-x 0.8s linear infinite;
+}
+
+@utility flow-dash-y {
+  background-image: linear-gradient(
+    180deg,
+    --alpha(var(--color-primary) / 40%) 0 50%,
+    transparent 0 100%
+  );
+  background-size: 2px 16px;
+  background-repeat: repeat-y;
+  background-position: center 0;
+  animation: flow-march-y 0.8s linear infinite;
+}
+
+@utility flow-travel-x {
+  animation: flow-travel-x 3.2s ease-in-out infinite;
+}
+
+@utility flow-travel-y {
+  animation: flow-travel-y 3.2s ease-in-out infinite;
+}
+
+@utility flow-step-* {
+  animation-delay: calc(--value(integer) * 1.6s);
+}
+
+@keyframes flow-march-x {
+  to {
+    background-position-x: 16px;
+  }
+}
+
+@keyframes flow-march-y {
+  to {
+    background-position-y: 16px;
+  }
+}
+
+@keyframes flow-travel-x {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  50%,
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes flow-travel-y {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  45% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50%,
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+/* Responsive card grid: as many ~260px columns as fit. */
+@utility grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.25rem), 1fr));
+}
+
+/* Marching dashes along the itinerary map route (dash pattern 2 7 → period 9). */
+@utility map-march {
+  animation: map-march 1.2s linear infinite;
+}
+
+@keyframes map-march {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+/* Dark areas switch the focus ring to marigold so it stays visible; light cards inside them switch back. */
+@utility tone-dark {
+  --focus-color: var(--color-accent);
+}
+
+@utility tone-light {
+  --focus-color: var(--color-primary);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ground font-sans text-ink antialiased;
+  }
+
+  a {
+    color: var(--color-primary);
+  }
+
+  a:hover {
+    color: var(--color-ink);
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus-color, var(--color-primary));
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

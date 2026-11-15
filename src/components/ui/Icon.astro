@@ -1,0 +1,135 @@
+---
+export type IconName =
+  | "whatsapp"
+  | "arrow-right"
+  | "check"
+  | "mail"
+  | "ticket-arrow"
+  | "receipt"
+  | "guide"
+  | "steering"
+  | "chevron-down"
+  | "chevron-left"
+  | "chevron-right"
+  | "bulb"
+  | "bed";
+
+interface Props {
+  name: IconName;
+  /** Height in px; width follows the icon's aspect ratio. */
+  size?: number;
+  /** Strokes draw themselves in as the icon scrolls into view (see `draw-stroke` in global.css). */
+  draw?: boolean;
+  class?: string;
+}
+
+interface IconDef {
+  viewBox: [number, number];
+  paths: { d: string; dash?: string }[];
+}
+
+const icons: Record<IconName, IconDef> = {
+  whatsapp: {
+    viewBox: [24, 24],
+    paths: [
+      {
+        d: "M21 11.5a8.4 8.4 0 0 1-12.3 7.5L3 21l2-5.6A8.4 8.4 0 1 1 21 11.5z",
+      },
+    ],
+  },
+  "arrow-right": {
+    viewBox: [24, 24],
+    paths: [{ d: "M5 12h14" }, { d: "M13 6l6 6-6 6" }],
+  },
+  check: { viewBox: [24, 24], paths: [{ d: "M5 12.5l4.5 4.5L19 7.5" }] },
+  mail: {
+    viewBox: [24, 24],
+    paths: [{ d: "M4 6h16v12H4z" }, { d: "M4 7l8 6 8-6" }],
+  },
+  "ticket-arrow": {
+    viewBox: [56, 20],
+    paths: [{ d: "M2 10h48", dash: "2 5" }, { d: "M44 4l6 6-6 6" }],
+  },
+  /** Receipt with a check: no hidden fees. */
+  receipt: {
+    viewBox: [24, 24],
+    paths: [
+      { d: "M6 3h12v18l-3-2-3 2-3-2-3 2z" },
+      { d: "M9 8h6" },
+      { d: "M9 11.5h4" },
+      { d: "M9.5 15l1.5 1.5 3-3" },
+    ],
+  },
+  /** Person with a flag: local guide. */
+  guide: {
+    viewBox: [24, 24],
+    paths: [
+      { d: "M11.5 7a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" },
+      { d: "M4 21v-3a5 5 0 0 1 10 0v3" },
+      { d: "M17.5 21V4" },
+      { d: "M17.5 4h3.5l-1.2 2.2L21 8.5h-3.5" },
+    ],
+  },
+  /** Steering wheel: careful driving. */
+  steering: {
+    viewBox: [24, 24],
+    paths: [
+      { d: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" },
+      { d: "M14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" },
+      { d: "M3.4 10.2l6.2 1.1" },
+      { d: "M20.6 10.2l-6.2 1.1" },
+      { d: "M12 14.5V21" },
+    ],
+  },
+  "chevron-down": { viewBox: [24, 24], paths: [{ d: "M6 9l6 6 6-6" }] },
+  "chevron-left": { viewBox: [24, 24], paths: [{ d: "M15 6l-6 6 6 6" }] },
+  "chevron-right": { viewBox: [24, 24], paths: [{ d: "M9 6l6 6-6 6" }] },
+  /** Light bulb: tips. */
+  bulb: {
+    viewBox: [24, 24],
+    paths: [
+      { d: "M9 18h6" },
+      { d: "M10 22h4" },
+      {
+        d: "M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z",
+      },
+    ],
+  },
+  /** Bed: overnight stop. */
+  bed: {
+    viewBox: [24, 24],
+    paths: [
+      { d: "M3 18V8" },
+      { d: "M3 14h18v4" },
+      { d: "M21 14v-2a3 3 0 0 0-3-3h-7v5" },
+      { d: "M9 11a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" },
+    ],
+  },
+};
+
+const { name, size = 18, draw = false, class: className } = Astro.props;
+const { viewBox, paths } = icons[name];
+const [w, h] = viewBox;
+---
+
+<svg
+  width={Math.round((size * w) / h)}
+  height={size}
+  viewBox={`0 0 ${w} ${h}`}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  class:list={["shrink-0", draw && "draw-stroke", className]}
+>
+  {paths.map((p) => (
+    <path
+      d={p.d}
+      stroke-dasharray={p.dash}
+      pathLength={draw && !p.dash ? 1 : undefined}
+    />
+  ))}
+</svg>

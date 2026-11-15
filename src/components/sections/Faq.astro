@@ -1,0 +1,40 @@
+---
+import type { FaqItem } from "@/data/faq";
+import { revealDelay } from "@/lib/motion";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  items: FaqItem[];
+  /** Index of the question that starts open (-1 for none). */
+  openIndex?: number;
+}
+
+const { id = "faq", eyebrow, title, items, openIndex = 0 } = Astro.props;
+---
+
+<Section
+  id={id}
+  tone="surface"
+  bordered="top"
+  innerClass="grid gap-12 md:grid-cols-2"
+>
+  <SectionHeading eyebrow={eyebrow} title={title} layout="stack" />
+
+  <div class="flex flex-col">
+    {items.map((item, i) => (
+      <details
+        open={i === openIndex}
+        class:list={["reveal border-b border-line", revealDelay(i)]}
+      >
+        <summary class="py-5 text-lead font-semibold">{item.question}</summary>
+        <p class="m-0 -mt-2 pb-5 text-base leading-relaxed text-body">
+          {item.answer}
+        </p>
+      </details>
+    ))}
+  </div>
+</Section>

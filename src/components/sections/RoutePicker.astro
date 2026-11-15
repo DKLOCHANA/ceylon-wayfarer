@@ -1,0 +1,243 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Picture } from "astro:assets";
+import { site } from "@/config/site";
+import { routePrice } from "@/lib/format";
+import { revealDelay } from "@/lib/motion";
+import Chip from "@/components/ui/Chip.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  bookLabel: string;
+  /** Accessible name for the group of route buttons. */
+  listLabel: string;
+  /** Routes in display order (first 5 by `order`). */
+  routes: CollectionEntry<"routes">[];
+}
+
+const {
+  id = "routes",
+  eyebrow,
+  title,
+  intro,
+  bookLabel,
+  listLabel,
+  routes,
+} = Astro.props;
+const stageId = `${id}-stage`;
+---
+
+<Section id={id} innerClass="flex flex-col gap-12">
+  <SectionHeading eyebrow={eyebrow} title={title} intro={intro} />
+
+  <div
+    data-route-picker
+    class="group/picker flex flex-wrap items-stretch gap-7"
+  >
+    <div
+      role="group"
+      aria-label={listLabel}
+      class="flex min-w-0 grow basis-85 flex-col gap-3"
+    >
+      {routes.map((route, i) => (
+        <button
+          class:list={[
+            "group/btn flex cursor-pointer flex-col justify-center gap-2.5 rounded-card border-[1.5px] border-line bg-surface px-5.5 py-5 text-left text-ink transition duration-400 ease-zoom hover:translate-x-1 hover:border-primary hover:shadow-lift aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-ground lg:flex-1",
+            "reveal-side",
+            revealDelay(i),
+          ]}
+          type="button"
+          data-route-btn
+          data-i={i}
+          aria-pressed={i === 0 ? "true" : "false"}
+          aria-controls={stageId}
+        >
+          <span class="flex justify-between gap-3 font-mono text-xs tracking-label-sm text-muted group-aria-pressed/btn:text-accent">
+            <span>{route.data.tag}</span>
+            <span>{route.data.duration}</span>
+          </span>
+          <span class="font-display text-title-sm leading-title font-extrabold tracking-title">
+            {route.data.title}
+          </span>
+          <span class="hidden text-ui leading-copy text-on-dark-body group-aria-pressed/btn:block">
+            {route.data.summary}
+          </span>
+        </button>
+      ))}
+    </div>
+
+    <div
+      id={stageId}
+      class="reveal-zoom relative aspect-5/4 min-w-0 grow-999 basis-140 overflow-hidden rounded-stage bg-primary"
+    >
+      {routes.map((route, i) => (
+        <Picture
+          src={route.data.image}
+          alt={route.data.imageAlt}
+          formats={["avif", "webp"]}
+          widths={[480, 720, 960, 1280]}
+          sizes="(min-width: 1280px) 760px, (min-width: 1024px) 60vw, 100vw"
+          loading="lazy"
+          decoding="async"
+          data-route-item
+          data-i={i}
+          data-active={i === 0 ? "" : undefined}
+          data-deferred={i === 0 ? undefined : ""}
+          hidden={i !== 0}
+          class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-900 data-active:animate-settle data-active:opacity-100"
+        />
+      ))}
+      <div aria-hidden="true" class="scrim-stage absolute inset-0"></div>
+
+      <div class="absolute inset-x-5 top-5 flex items-center justify-between gap-3">
+        <div>
+          {routes.map((route, i) => (
+            <Chip
+              variant="glass"
+              data-route-panel
+              data-i={i}
+              hidden={i !== 0}
+              class="animate-pop"
+            >
+              {route.data.place}
+            </Chip>
+          ))}
+        </div>
+        <span aria-hidden="true" class="flex gap-1.5">
+          {routes.map((_, i) => (
+            <span
+              data-route-item
+              data-i={i}
+              data-active={i === 0 ? "" : undefined}
+              class="group/bar relative h-1 w-7 overflow-hidden rounded-xs bg-white/45"
+            >
+              <span class="absolute inset-0 origin-left scale-x-0 bg-accent group-data-active/bar:scale-x-100 group-data-autoplay/picker:group-data-active/bar:animate-progress" />
+            </span>
+          ))}
+        </span>
+      </div>
+
+      <div data-route-live aria-live="off" class="absolute inset-x-5 bottom-5">
+        {routes.map((route, i) => (
+          <div
+            data-route-panel
+            data-i={i}
+            hidden={i !== 0}
+            class="flex animate-pop flex-wrap items-end justify-between gap-4"
+          >
+            <div class="flex flex-col gap-1.5 text-white">
+              <Eyebrow as="span" tone="accent">
+                {route.data.code}
+              </Eyebrow>
+              <h3 class="m-0 font-display text-stage font-extrabold">
+                {route.data.title}
+              </h3>
+            </div>
+            <div class="tone-light flex items-center gap-3.5 rounded-full bg-ground/94 py-2 pr-2 pl-5">
+              <span class="flex flex-col">
+                <Eyebrow as="span" size="micro" spacing="medium">
+                  {route.data.priceLabel}
+                </Eyebrow>
+                <span class="text-base font-semibold text-ink">
+                  {routePrice(route.data)}
+                </span>
+              </span>
+              <WhatsAppButton
+                message={site.messages.route(route.data.title)}
+                variant="dark"
+                size="sm"
+                icon={false}
+                class="text-sm"
+              >
+                {bookLabel}
+              </WhatsAppButton>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  const INTERVAL_MS = 5000;
+
+  for (const root of document.querySelectorAll<HTMLElement>(
+    "[data-route-picker]",
+  )) {
+    const buttons = [
+      ...root.querySelectorAll<HTMLButtonElement>("[data-route-btn]"),
+    ];
+    const panels = [
+      ...root.querySelectorAll<HTMLElement>("[data-route-panel]"),
+    ];
+    const items = [...root.querySelectorAll<HTMLElement>("[data-route-item]")];
+    const live = root.querySelector<HTMLElement>("[data-route-live]");
+    const count = buttons.length;
+
+    let current = 0;
+    let timer: number | undefined;
+    let stopped =
+      count < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let onScreen = false;
+
+    const show = (i: number) => {
+      current = i;
+      for (const b of buttons)
+        b.setAttribute("aria-pressed", String(Number(b.dataset.i) === i));
+      for (const p of panels) p.hidden = Number(p.dataset.i) !== i;
+      for (const el of items)
+        el.toggleAttribute("data-active", Number(el.dataset.i) === i);
+    };
+
+    // Run only while the picker is visible, the tab is active and nobody has clicked yet.
+    const sync = () => {
+      const run = !stopped && onScreen && !document.hidden;
+      if (run && timer === undefined) {
+        root.dataset.autoplay = "";
+        timer = window.setInterval(
+          () => show((current + 1) % count),
+          INTERVAL_MS,
+        );
+      } else if (!run && timer !== undefined) {
+        window.clearInterval(timer);
+        timer = undefined;
+        delete root.dataset.autoplay;
+      }
+    };
+
+    for (const b of buttons) {
+      b.addEventListener("click", () => {
+        stopped = true;
+        sync();
+        live?.setAttribute("aria-live", "polite");
+        show(Number(b.dataset.i));
+      });
+    }
+
+    new IntersectionObserver(([entry]) => {
+      onScreen = Boolean(entry?.isIntersecting);
+      sync();
+    }).observe(root);
+
+    // Routes 2+ stay hidden (so the browser doesn’t download them) until the picker scrolls into view.
+    const deferred = [...root.querySelectorAll<HTMLElement>("[data-deferred]")];
+    const reveal = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        for (const img of deferred) img.hidden = false;
+        reveal.disconnect();
+      },
+      { rootMargin: "0px" },
+    );
+    reveal.observe(root);
+    document.addEventListener("visibilitychange", sync);
+  }
+</script>

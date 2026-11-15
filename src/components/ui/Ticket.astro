@@ -1,0 +1,57 @@
+---
+import type { HTMLTag } from "astro/types";
+import Eyebrow from "./Eyebrow.astro";
+
+interface Props {
+  /** Small header labels, e.g. "RIDE TICKET" / "ONE WAY". */
+  label?: string;
+  labelRight?: string;
+  /** compact: 340px max (hero). full: fills its container (route cards). */
+  width?: "compact" | "full";
+  /** ground on photos (with shadow); surface on light pages (with border). */
+  tone?: "ground" | "surface";
+  as?: HTMLTag;
+  class?: string;
+}
+
+const {
+  label,
+  labelRight,
+  width = "compact",
+  tone = "ground",
+  as: Tag = "div",
+  class: className,
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    "tone-light max-w-full rounded-ticket text-ink",
+    width === "compact" ? "w-85" : "w-full",
+    tone === "ground"
+      ? "bg-ground shadow-ticket"
+      : "border border-line bg-surface",
+    className,
+  ]}
+>
+  <div class="flex flex-col gap-3.5 px-5.5 pt-5 pb-4">
+    {(label || labelRight) && (
+      <div class="flex justify-between gap-3">
+        <Eyebrow as="span" size="tiny">
+          {label}
+        </Eyebrow>
+        <Eyebrow as="span" size="tiny">
+          {labelRight}
+        </Eyebrow>
+      </div>
+    )}
+    <slot name="top" />
+  </div>
+  <div
+    aria-hidden="true"
+    class="mx-5.5 border-t-2 border-dashed border-dash"
+  ></div>
+  <div class="flex flex-col gap-3.5 px-5.5 pt-3.5 pb-5">
+    <slot name="bottom" />
+  </div>
+</Tag>

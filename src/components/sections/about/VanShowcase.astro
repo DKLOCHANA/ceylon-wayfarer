@@ -1,0 +1,62 @@
+---
+import type { VanPhoto, VanPhotoSpan } from "@/data/about";
+import type { DataRow } from "@/components/ui/DataList.astro";
+import { revealDelay } from "@/lib/motion";
+import PhotoOrPlaceholder from "@/components/ui/PhotoOrPlaceholder.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import StatCard from "@/components/ui/StatCard.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  /** Photo grid: big (2×2 on desktop), single, wide (2 columns). */
+  photos: VanPhoto[];
+  specs: DataRow[];
+}
+
+const { id = "van", eyebrow, title, photos, specs } = Astro.props;
+
+const spans: Record<VanPhotoSpan, string> = {
+  big: "col-span-2 md:col-span-1 md:row-span-2",
+  single: "",
+  wide: "col-span-2",
+};
+---
+
+<Section id={id} innerClass="flex flex-col gap-9">
+  <SectionHeading
+    eyebrow={eyebrow}
+    title={title}
+    layout="stack"
+    titleWidth="lg"
+  />
+
+  <div class="grid auto-rows-(--spacing-bento-row-sm) grid-cols-2 gap-4 md:auto-rows-(--spacing-bento-row) md:grid-cols-[2fr_1fr_1fr]">
+    {photos.map((photo, i) => (
+      <div class:list={["reveal-zoom", revealDelay(i), spans[photo.span]]}>
+        <PhotoOrPlaceholder
+          image={photo.image}
+          alt={photo.alt}
+          focus={photo.focus}
+          placeholder={photo.placeholder}
+          sizes={
+            photo.span === "single"
+              ? "(min-width: 768px) 25vw, 50vw"
+              : "(min-width: 768px) 50vw, 100vw"
+          }
+          class="size-full rounded-tile"
+        />
+      </div>
+    ))}
+  </div>
+
+  <ul class="m-0 grid list-none grid-cols-2 gap-4 p-0 md:grid-cols-4">
+    {specs.map((spec, i) => (
+      <li class:list={["reveal", revealDelay(i)]}>
+        <StatCard label={spec.label} value={spec.value} class="h-full" />
+      </li>
+    ))}
+  </ul>
+</Section>

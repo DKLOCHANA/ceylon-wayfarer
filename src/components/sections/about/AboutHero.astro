@@ -1,0 +1,93 @@
+---
+import type { ImageMetadata } from "astro";
+import type { DataRow } from "@/components/ui/DataList.astro";
+import { url } from "@/lib/url";
+import Button from "@/components/ui/Button.astro";
+import ChipList from "@/components/ui/ChipList.astro";
+import Container from "@/components/ui/Container.astro";
+import DataList from "@/components/ui/DataList.astro";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import PhotoOrPlaceholder from "@/components/ui/PhotoOrPlaceholder.astro";
+import Ticket from "@/components/ui/Ticket.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+interface Pass {
+  label: string;
+  labelRight: string;
+  rows: DataRow[];
+  footLabel: string;
+  footValue: string;
+}
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  bio: string;
+  chips: readonly string[];
+  /** Real photo of the owner; the placeholder shows until supplied. */
+  photo?: { image: ImageMetadata; alt: string };
+  photoPlaceholder: string;
+  /** The "driver pass" ticket overlapping the photo. */
+  pass: Pass;
+  whatsappLabel: string;
+  secondaryCta: { label: string; href: string };
+}
+
+const {
+  eyebrow,
+  title,
+  bio,
+  chips,
+  photo,
+  photoPlaceholder,
+  pass,
+  whatsappLabel,
+  secondaryCta,
+} = Astro.props;
+---
+
+<section class="pt-16 pb-24 md:pt-20">
+  <Container class="grid items-center gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+    <div class="enter-1 relative order-2 pr-6 pb-16 sm:pr-10 lg:order-1">
+      <PhotoOrPlaceholder
+        image={photo?.image}
+        alt={photo?.alt}
+        placeholder={photoPlaceholder}
+        widths={[480, 720, 960]}
+        sizes="(min-width: 1024px) 620px, 100vw"
+        class="aspect-4/5 w-full rounded-stage"
+      />
+      <div class="absolute right-0 bottom-0 w-4/5 max-w-80 rotate-3">
+        <Ticket
+          label={pass.label}
+          labelRight={pass.labelRight}
+          width="full"
+          class="animate-float"
+        >
+          <DataList slot="top" rows={pass.rows} />
+          <div slot="bottom" class="flex items-baseline justify-between gap-3">
+            <Eyebrow as="span" size="tiny" spacing="medium">
+              {pass.footLabel}
+            </Eyebrow>
+            <span class="text-lg font-semibold">{pass.footValue}</span>
+          </div>
+        </Ticket>
+      </div>
+    </div>
+
+    <div class="order-1 flex flex-col gap-6 lg:order-2">
+      <Eyebrow class="enter-0">{eyebrow}</Eyebrow>
+      <h1 class="enter-1 m-0 font-display text-h2-xl font-extrabold">
+        {title}
+      </h1>
+      <p class="enter-2 m-0 text-lead leading-relaxed text-body">{bio}</p>
+      <ChipList items={chips} />
+      <div class="enter-3 flex flex-wrap gap-3">
+        <WhatsAppButton>{whatsappLabel}</WhatsAppButton>
+        <Button href={url(secondaryCta.href)} variant="outline">
+          {secondaryCta.label}
+        </Button>
+      </div>
+    </div>
+  </Container>
+</section>

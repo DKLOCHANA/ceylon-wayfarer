@@ -1,0 +1,34 @@
+---
+interface Props {
+  places: string[];
+  /** Accessible name for the strip. */
+  label: string;
+}
+
+const { places, label } = Astro.props;
+// The list is rendered twice so the -50% scroll loops seamlessly; the copy is hidden from screen readers.
+const copies = [false, true];
+---
+
+<section
+  aria-label={label}
+  class="overflow-hidden border-b border-line py-6.5 motion-reduce:overflow-x-auto"
+>
+  <div class="pause-on-hover flex w-max animate-marquee">
+    {copies.map((isCopy) => (
+      <ul
+        aria-hidden={isCopy ? "true" : undefined}
+        class="m-0 flex list-none gap-10 p-0 pr-10 font-display text-3xl font-bold tracking-title whitespace-nowrap"
+      >
+        {places.map((place) => (
+          <>
+            <li>{place}</li>
+            <li aria-hidden="true" class="text-accent">
+              ✦
+            </li>
+          </>
+        ))}
+      </ul>
+    ))}
+  </div>
+</section>

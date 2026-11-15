@@ -1,0 +1,20 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PhotoCredits from "@/components/sections/PhotoCredits.astro";
+import { creditsPage, licenceUrls, photoCredits } from "@/data/photoCredits";
+---
+
+<BaseLayout
+  title={creditsPage.seoTitle}
+  description={creditsPage.seoDescription}
+  headerVariant="solid"
+>
+  <PhotoCredits
+    eyebrow={creditsPage.eyebrow}
+    title={creditsPage.title}
+    intro={creditsPage.intro}
+    credits={photoCredits}
+    licenceUrls={licenceUrls}
+    sourceNote={creditsPage.sourceNote}
+  />
+</BaseLayout>

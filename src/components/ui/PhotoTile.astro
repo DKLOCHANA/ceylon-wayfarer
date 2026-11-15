@@ -1,0 +1,67 @@
+---
+import type { ImageMetadata } from "astro";
+import { Picture } from "astro:assets";
+import Chip from "./Chip.astro";
+
+export type PhotoTileSpan = "single" | "tall" | "wide";
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  caption?: string;
+  /** tall spans 2 rows (4-column layout only), wide spans 2 columns. */
+  span?: PhotoTileSpan;
+  /** Responsive sizes hint for the browser. */
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  caption,
+  span = "single",
+  sizes,
+  class: className,
+} = Astro.props;
+
+const spans: Record<PhotoTileSpan, string> = {
+  single: "",
+  tall: "lg:row-span-2",
+  wide: "col-span-2",
+};
+
+const defaultSizes =
+  span === "wide"
+    ? "(min-width: 1280px) 600px, 100vw"
+    : "(min-width: 1280px) 300px, (min-width: 1024px) 25vw, 50vw";
+---
+
+<figure
+  class:list={[
+    "group reveal-zoom relative m-0 overflow-hidden rounded-tile bg-primary",
+    spans[span],
+    className,
+  ]}
+>
+  <Picture
+    src={image}
+    alt={alt}
+    formats={["avif", "webp"]}
+    widths={[320, 480, 640, 960, 1280]}
+    sizes={sizes ?? defaultSizes}
+    loading="lazy"
+    decoding="async"
+    class="absolute inset-0 size-full object-cover transition-transform duration-900 ease-zoom group-hover:scale-106"
+  />
+  {caption && (
+    <Chip
+      as="figcaption"
+      variant="glass"
+      size="sm"
+      class="absolute bottom-3.5 left-3.5"
+    >
+      {caption}
+    </Chip>
+  )}
+</figure>

@@ -1,0 +1,640 @@
+# Ceylon Wayfarer — itineraries data file
+# 5 itineraries for the itinerary pages (one page per entry, URL = /itineraries/<slug>).
+# Distances and drive times are estimates: verify on Google Maps before launch.
+# heroImage / image are file names in src/assets/images/ .
+# A day with no image uses the itinerary's heroImage. The last day has an empty overnight (guests fly home).
+#
+# path: the stops this day passes on the map (ids from src/data/mapStops.ts). One stop = a local day.
+# order: position in itinerary lists.
+# Price = totalDistanceKm × site.pricing.perKm + days × site.pricing.perDayMultiDay (calculated, not stored).
+# Credits for the photos are in src/assets/images/CREDITS.md.
+
+- title: "7 Days Classic Sri Lanka"
+  slug: "7-days-classic-sri-lanka"
+  order: 1
+  days: 7
+  nights: 6
+  summary: "The island's greatest hits in one week: Sigiriya, Kandy, tea country, Ella, a Yala safari and Galle Fort. A favourite route for first-time visitors."
+  start: "BIA"
+  end: "BIA"
+  totalDistanceKm: 810
+  bestMonths: "December–April — dry season in the hill country and on the south coast, when Yala safaris are at their best"
+  heroImage: "hero.jpg"
+  mapStops:
+    - name: "Bandaranaike Airport (BIA)"
+    - name: "Dambulla"
+    - name: "Sigiriya"
+    - name: "Kandy"
+    - name: "Nuwara Eliya"
+    - name: "Ella"
+    - name: "Tissamaharama (Yala)"
+    - name: "Galle"
+    - name: "Bandaranaike Airport (BIA)"
+  itinerary:
+    - day: "1"
+      title: "Airport → Sigiriya"
+      from: "BIA"
+      to: "Sigiriya"
+      path: [bia, dambulla, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 160
+      driveTime: "~4 h"
+      highlights: ["Dambulla cave temple", "Village roads"]
+      description: "I meet you at arrivals with a name sign and we head north to the Cultural Triangle. We stop at the Dambulla cave temple on the way, then you check in near Sigiriya for the evening."
+      overnight: "Sigiriya"
+      tip: "Bring clothes that cover shoulders and knees for Dambulla, and leave shoes at the entrance."
+      image: "sigiriya.jpg"
+    - day: "2"
+      title: "Sigiriya rock & elephant safari"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 60
+      driveTime: "~1.5 h"
+      highlights: ["Sigiriya rock", "Minneriya safari"]
+      description: "I drop you at Sigiriya early so you climb before the heat and the crowds. In the afternoon I drive you to Minneriya or Kaudulla, whichever park the elephants are using that week, for a jeep safari."
+      overnight: "Sigiriya"
+      tip: "Be at the Sigiriya gate when it opens; by 10 am the stairs are hot and busy."
+      image: "elephants.jpg"
+    - day: "3"
+      title: "Sigiriya → Kandy"
+      from: "Sigiriya"
+      to: "Kandy"
+      path: [sigiriya, kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~3 h"
+      highlights: ["Spice garden", "Temple of the Tooth", "Kandy Lake"]
+      description: "We drive south through Matale, where you can stop at a spice garden if you like. In Kandy I drop you at the Temple of the Tooth for the evening ceremony, then at your hotel."
+      overnight: "Kandy"
+      tip: "The temple is most atmospheric during the evening puja, around 6:30 pm."
+      image: "temple.jpg"
+    - day: "4"
+      title: "Kandy → Nuwara Eliya"
+      from: "Kandy"
+      to: "Nuwara Eliya"
+      path: [kandy, nuwara]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 77
+      driveTime: "~3 h"
+      highlights: ["Tea factory", "Ramboda Falls", "Gregory Lake"]
+      description: "The road climbs into tea country with plenty of waterfalls and viewpoints. We stop at a working tea factory for a tour and tasting before Nuwara Eliya."
+      overnight: "Nuwara Eliya"
+      tip: "Pack a warm layer; evenings in Nuwara Eliya can drop to around 10 °C."
+      image: "tea.jpg"
+    - day: "5"
+      title: "Nuwara Eliya → Ella"
+      from: "Nuwara Eliya"
+      to: "Ella"
+      path: [nuwara, ella]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 55
+      driveTime: "~2 h"
+      highlights: ["Hill-country train", "Nine Arch Bridge", "Little Adam's Peak"]
+      description: "You ride the famous scenic train from Nanu Oya to Ella while I drive your luggage round and meet you at Ella station. Afternoon free for the Nine Arch Bridge or Little Adam's Peak."
+      overnight: "Ella"
+      tip: "The train from Kandy itself is still suspended after Cyclone Ditwah, so Nanu Oya is the place to board; ask me to book reserved seats early."
+      image: "hero.jpg"
+    - day: "6"
+      title: "Ella → Yala"
+      from: "Ella"
+      to: "Tissamaharama"
+      path: [ella, tissa]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~2.5 h"
+      highlights: ["Ravana Falls", "Yala safari"]
+      description: "We drive down out of the hills past Ravana Falls to Tissamaharama. In the afternoon you join a jeep safari in Yala, home to leopards, elephants and sloth bears."
+      overnight: "Tissamaharama"
+      tip: "Afternoon safaris start around 2:30 pm; book a jeep with a smaller group for better views."
+      image: "leopard.jpg"
+    - day: "7"
+      title: "Yala → Galle Fort → Airport"
+      from: "Tissamaharama"
+      to: "BIA"
+      path: [tissa, galle, bia]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 280
+      driveTime: "~5 h"
+      highlights: ["Galle Fort", "Southern Expressway"]
+      description: "We follow the south coast to Galle, where you can walk the fort ramparts and have lunch. Then I take the expressway back to the airport in time for your flight."
+      overnight: ""
+      tip: "Tell me your flight time on day one so I can plan how long you get in Galle."
+      image: "galle.jpg"
+
+- title: "10 Days Highlights of Sri Lanka"
+  slug: "10-days-highlights-of-sri-lanka"
+  order: 2
+  days: 10
+  nights: 9
+  summary: "The classic loop at a comfortable pace: ancient cities, Kandy, tea country, Ella, a Yala safari and two nights by the sea in Mirissa."
+  start: "BIA"
+  end: "BIA"
+  totalDistanceKm: 970
+  bestMonths: "December–April — dry weather across the hills and south coast, plus whale-watching season in Mirissa"
+  heroImage: "tea.jpg"
+  mapStops:
+    - name: "Bandaranaike Airport (BIA)"
+    - name: "Sigiriya"
+    - name: "Polonnaruwa"
+    - name: "Dambulla"
+    - name: "Kandy"
+    - name: "Nuwara Eliya"
+    - name: "Ella"
+    - name: "Tissamaharama (Yala)"
+    - name: "Mirissa"
+    - name: "Galle"
+    - name: "Bandaranaike Airport (BIA)"
+  itinerary:
+    - day: "1"
+      title: "Airport → Sigiriya"
+      from: "BIA"
+      to: "Sigiriya"
+      path: [bia, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 160
+      driveTime: "~4 h"
+      highlights: ["Scenic drive north", "Sunset at your hotel"]
+      description: "I meet you at arrivals and we drive north to Sigiriya at an easy pace, stopping for king coconut and a snack. You arrive in time to rest after the flight."
+      overnight: "Sigiriya"
+      tip: "If you land at night, tell me and we can break the drive with a first night near the airport."
+      image: "sigiriya.jpg"
+    - day: "2"
+      title: "Sigiriya rock & elephant safari"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 60
+      driveTime: "~1.5 h"
+      highlights: ["Sigiriya rock", "Minneriya safari"]
+      description: "Early climb of Sigiriya, back for lunch and a rest, then I drive you to Minneriya or Kaudulla for an afternoon elephant safari."
+      overnight: "Sigiriya"
+      tip: "Carry at least a litre of water each for the climb; there are over 1,000 steps."
+      image: "elephants.jpg"
+    - day: "3"
+      title: "Polonnaruwa day trip"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya, polonnaruwa, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 120
+      driveTime: "~3 h return"
+      highlights: ["Polonnaruwa ruins", "Gal Vihara"]
+      description: "We spend the day in the ancient royal city of Polonnaruwa. The site is spread out, so I drive you between the main ruins and you explore each one on foot or by rented bicycle."
+      overnight: "Sigiriya"
+      tip: "Start by 8 am; the ruins have little shade and get very hot after midday."
+      image: "polonnaruwa.jpg"
+    - day: "4"
+      title: "Sigiriya → Kandy"
+      from: "Sigiriya"
+      to: "Kandy"
+      path: [sigiriya, dambulla, kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~3 h"
+      highlights: ["Dambulla cave temple", "Spice garden", "Kandy Lake"]
+      description: "On the way south we stop at the Dambulla cave temple and a spice garden in Matale. You reach Kandy by mid-afternoon with time for a walk around the lake."
+      overnight: "Kandy"
+      tip: "Dambulla has 300+ steps up to the caves; go in the morning before it heats up."
+      image: "lake.jpg"
+    - day: "5"
+      title: "Kandy"
+      from: "Kandy"
+      to: "Kandy"
+      path: [kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 20
+      driveTime: "~1 h"
+      highlights: ["Temple of the Tooth", "Peradeniya gardens", "Cultural dance show"]
+      description: "A slower day in the hill capital. I drive you to the Royal Botanical Gardens at Peradeniya in the morning, and the Temple of the Tooth and a Kandyan dance show in the evening."
+      overnight: "Kandy"
+      tip: "The dance show starts around 5 pm and fills up, so arrive 20 minutes early."
+      image: "temple.jpg"
+    - day: "6"
+      title: "Kandy → Nuwara Eliya"
+      from: "Kandy"
+      to: "Nuwara Eliya"
+      path: [kandy, nuwara]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 77
+      driveTime: "~3 h"
+      highlights: ["Tea factory", "Ramboda Falls"]
+      description: "We climb into tea country, stopping at waterfalls and a working tea factory. Nuwara Eliya has a cool, almost English feel, with a lake and colonial buildings."
+      overnight: "Nuwara Eliya"
+      tip: "Pack a warm layer; evenings in the hills get cold."
+      image: "tea.jpg"
+    - day: "7"
+      title: "Nuwara Eliya → Ella"
+      from: "Nuwara Eliya"
+      to: "Ella"
+      path: [nuwara, ella]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 55
+      driveTime: "~2 h"
+      highlights: ["Hill-country train", "Nine Arch Bridge"]
+      description: "You take the scenic train from Nanu Oya to Ella while I bring your bags by road and meet you at the station. Afternoon free for the Nine Arch Bridge."
+      overnight: "Ella"
+      tip: "Check the train times at Nine Arch Bridge with me so you're there when a train crosses."
+      image: "hero.jpg"
+    - day: "8"
+      title: "Ella → Yala"
+      from: "Ella"
+      to: "Tissamaharama"
+      path: [ella, tissa]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~2.5 h"
+      highlights: ["Little Adam's Peak", "Yala safari"]
+      description: "An early walk up Little Adam's Peak, then we drive down to Tissamaharama for an afternoon jeep safari in Yala."
+      overnight: "Tissamaharama"
+      tip: "Start Little Adam's Peak by 6:30 am for clear views before the clouds roll in."
+      image: "leopard.jpg"
+    - day: "9"
+      title: "Yala → Mirissa"
+      from: "Tissamaharama"
+      to: "Mirissa"
+      path: [tissa, mirissa]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 115
+      driveTime: "~2.5 h"
+      highlights: ["South-coast beaches", "Coconut Tree Hill"]
+      description: "We follow the coast west to Mirissa. The afternoon is yours on the beach, with sunset from Coconut Tree Hill."
+      overnight: "Mirissa"
+      tip: "Whale-watching boats leave around 6:30 am; book for the next morning as soon as you arrive."
+      image: "beach.jpg"
+    - day: "10"
+      title: "Mirissa → Galle Fort → Airport"
+      from: "Mirissa"
+      to: "BIA"
+      path: [mirissa, galle, bia]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 185
+      driveTime: "~3.5 h"
+      highlights: ["Galle Fort", "Southern Expressway"]
+      description: "A stop in Galle Fort for a walk on the ramparts and lunch, then I drive you up the expressway to the airport."
+      overnight: ""
+      tip: "Leave Galle at least 4 hours before an international flight to allow for traffic near Colombo."
+      image: "galle.jpg"
+
+- title: "14 Days Complete Sri Lanka"
+  slug: "14-days-complete-sri-lanka"
+  order: 3
+  days: 14
+  nights: 13
+  summary: "The whole classic island in two unhurried weeks: three ancient capitals, Kandy, Horton Plains, Ella, Yala and beach days on the south coast."
+  start: "BIA"
+  end: "BIA"
+  totalDistanceKm: 1180
+  bestMonths: "January–March — the driest stretch for both the north-central ancient cities and the south and hill country"
+  heroImage: "sigiriya.jpg"
+  mapStops:
+    - name: "Bandaranaike Airport (BIA)"
+    - name: "Anuradhapura"
+    - name: "Sigiriya"
+    - name: "Polonnaruwa"
+    - name: "Dambulla"
+    - name: "Kandy"
+    - name: "Nuwara Eliya"
+    - name: "Horton Plains"
+    - name: "Ella"
+    - name: "Tissamaharama (Yala)"
+    - name: "Mirissa"
+    - name: "Galle"
+    - name: "Bandaranaike Airport (BIA)"
+  itinerary:
+    - day: "1"
+      title: "Airport → Anuradhapura"
+      from: "BIA"
+      to: "Anuradhapura"
+      path: [bia, anuradhapura]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 190
+      driveTime: "~4.5 h"
+      highlights: ["Drive through the dry zone", "Evening at the stupas"]
+      description: "I meet you at arrivals and we drive north to Anuradhapura, Sri Lanka's first ancient capital. If there's time, I drop you at Ruwanwelisaya to see the stupa lit up at dusk."
+      overnight: "Anuradhapura"
+      tip: "Wear white or light clothing for the sacred city; it is respectful and much cooler."
+    - day: "2"
+      title: "Anuradhapura & Mihintale"
+      from: "Anuradhapura"
+      to: "Anuradhapura"
+      path: [anuradhapura]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 40
+      driveTime: "~1.5 h"
+      highlights: ["Sri Maha Bodhi", "Giant stupas", "Mihintale"]
+      description: "A full day in the sacred city. I drive you between the main sites, which are far apart, and in the late afternoon to Mihintale, where Buddhism arrived in Sri Lanka."
+      overnight: "Anuradhapura"
+      tip: "Climb Mihintale around 4 pm for cooler steps and sunset views."
+    - day: "3"
+      title: "Anuradhapura → Sigiriya"
+      from: "Anuradhapura"
+      to: "Sigiriya"
+      path: [anuradhapura, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 75
+      driveTime: "~2 h"
+      highlights: ["Pidurangala rock", "Sunset view of Sigiriya"]
+      description: "A short morning drive to Sigiriya, then a relaxed afternoon. I drop you at Pidurangala rock for the classic sunset view of Sigiriya."
+      overnight: "Sigiriya"
+      tip: "Pidurangala's last section is a scramble over boulders; wear proper shoes."
+      image: "sigiriya.jpg"
+    - day: "4"
+      title: "Sigiriya rock & elephant safari"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 60
+      driveTime: "~1.5 h"
+      highlights: ["Sigiriya rock", "Minneriya safari"]
+      description: "Early climb of Sigiriya, then an afternoon jeep safari at Minneriya or Kaudulla to see wild elephants."
+      overnight: "Sigiriya"
+      tip: "Be at the Sigiriya gate when it opens to beat the heat and the tour groups."
+      image: "elephants.jpg"
+    - day: "5"
+      title: "Polonnaruwa day trip"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya, polonnaruwa, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 120
+      driveTime: "~3 h return"
+      highlights: ["Polonnaruwa ruins", "Gal Vihara"]
+      description: "We spend the day at Polonnaruwa, the medieval capital. I drive you between the ruins and you explore each site on foot or by bicycle."
+      overnight: "Sigiriya"
+      tip: "Start early and bring a hat; there is very little shade."
+      image: "polonnaruwa.jpg"
+    - day: "6"
+      title: "Sigiriya → Kandy"
+      from: "Sigiriya"
+      to: "Kandy"
+      path: [sigiriya, dambulla, kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~3 h"
+      highlights: ["Dambulla cave temple", "Spice garden"]
+      description: "On the way south we stop at the Dambulla cave temple and a spice garden. You reach Kandy in time for an evening by the lake."
+      overnight: "Kandy"
+      tip: "Cover shoulders and knees at Dambulla and in Kandy's temples."
+      image: "lake.jpg"
+    - day: "7"
+      title: "Kandy"
+      from: "Kandy"
+      to: "Kandy"
+      path: [kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 20
+      driveTime: "~1 h"
+      highlights: ["Temple of the Tooth", "Peradeniya gardens", "Cultural dance show"]
+      description: "A day to enjoy Kandy: the Royal Botanical Gardens in the morning, the Temple of the Tooth and a Kandyan dance show in the evening."
+      overnight: "Kandy"
+      tip: "The evening temple ceremony starts around 6:30 pm and is worth timing your visit for."
+      image: "temple.jpg"
+    - day: "8"
+      title: "Kandy → Nuwara Eliya"
+      from: "Kandy"
+      to: "Nuwara Eliya"
+      path: [kandy, nuwara]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 77
+      driveTime: "~3 h"
+      highlights: ["Tea factory", "Ramboda Falls"]
+      description: "We climb into tea country with stops at waterfalls and a working tea factory, arriving in cool Nuwara Eliya for the evening."
+      overnight: "Nuwara Eliya"
+      tip: "Bring a warm jacket; tomorrow starts cold."
+      image: "tea.jpg"
+    - day: "9"
+      title: "Horton Plains & World's End"
+      from: "Nuwara Eliya"
+      to: "Nuwara Eliya"
+      path: [nuwara, horton, nuwara]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 65
+      driveTime: "~2 h return"
+      highlights: ["Horton Plains", "World's End", "Baker's Falls"]
+      description: "A very early start to Horton Plains, a high plateau with a 9 km loop walk to the World's End cliff. Back in Nuwara Eliya by lunch for a slow afternoon."
+      overnight: "Nuwara Eliya"
+      tip: "We leave around 5:30 am; mist usually covers World's End after 10 am."
+      image: "horton.jpg"
+    - day: "10"
+      title: "Nuwara Eliya → Ella"
+      from: "Nuwara Eliya"
+      to: "Ella"
+      path: [nuwara, ella]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 55
+      driveTime: "~2 h"
+      highlights: ["Hill-country train", "Nine Arch Bridge"]
+      description: "You ride the scenic train from Nanu Oya to Ella while I drive your luggage round and meet you at Ella station."
+      overnight: "Ella"
+      tip: "Sit on the right-hand side of the train going to Ella for the best valley views."
+      image: "hero.jpg"
+    - day: "11"
+      title: "Ella → Yala"
+      from: "Ella"
+      to: "Tissamaharama"
+      path: [ella, tissa]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~2.5 h"
+      highlights: ["Little Adam's Peak", "Ravana Falls", "Yala safari"]
+      description: "An early walk up Little Adam's Peak, then down past Ravana Falls to Tissamaharama for an afternoon safari in Yala."
+      overnight: "Tissamaharama"
+      tip: "Yala usually closes for part of September and October; outside that, afternoon safaris often see more leopards."
+      image: "leopard.jpg"
+    - day: "12–13"
+      title: "Yala → Mirissa & beach day"
+      from: "Tissamaharama"
+      to: "Mirissa"
+      path: [tissa, mirissa]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 115
+      driveTime: "~2.5 h"
+      highlights: ["Beach time", "Whale watching", "Coconut Tree Hill"]
+      description: "We follow the coast to Mirissa and you have a full free day by the sea, with an optional early whale-watching trip. I stay nearby in case you want a ride to another beach."
+      overnight: "Mirissa"
+      tip: "Whale watching is best from November to April; boats leave around 6:30 am."
+      image: "beach.jpg"
+    - day: "14"
+      title: "Mirissa → Galle Fort → Airport"
+      from: "Mirissa"
+      to: "BIA"
+      path: [mirissa, galle, bia]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 185
+      driveTime: "~3.5 h"
+      highlights: ["Galle Fort", "Southern Expressway"]
+      description: "A last walk and lunch in Galle Fort, then the expressway back to the airport."
+      overnight: ""
+      tip: "Leave Galle at least 4 hours before an international flight."
+      image: "galle.jpg"
+
+- title: "5 Days Culture & Tea Country"
+  slug: "5-days-culture-and-tea-country"
+  order: 4
+  days: 5
+  nights: 4
+  summary: "A short trip for stopovers and long weekends: Sigiriya, Kandy and the tea hills of Nuwara Eliya, without rushing."
+  start: "BIA"
+  end: "BIA"
+  totalDistanceKm: 570
+  bestMonths: "January–April — dry in the Cultural Triangle and clear views in the hill country"
+  heroImage: "temple.jpg"
+  mapStops:
+    - name: "Bandaranaike Airport (BIA)"
+    - name: "Dambulla"
+    - name: "Sigiriya"
+    - name: "Kandy"
+    - name: "Nuwara Eliya"
+    - name: "Bandaranaike Airport (BIA)"
+  itinerary:
+    - day: "1"
+      title: "Airport → Sigiriya"
+      from: "BIA"
+      to: "Sigiriya"
+      path: [bia, dambulla, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 160
+      driveTime: "~4 h"
+      highlights: ["Dambulla cave temple"]
+      description: "I meet you at arrivals and we drive north, stopping at the Dambulla cave temple on the way. Evening free near Sigiriya."
+      overnight: "Sigiriya"
+      tip: "Carry some small rupee notes for temple shoe-minders and drinks on the road."
+      image: "sigiriya.jpg"
+    - day: "2"
+      title: "Sigiriya rock & elephant safari"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 60
+      driveTime: "~1.5 h"
+      highlights: ["Sigiriya rock", "Minneriya safari"]
+      description: "An early climb of Sigiriya, then an afternoon jeep safari to see wild elephants at Minneriya or Kaudulla."
+      overnight: "Sigiriya"
+      tip: "Be at the gate when it opens; the climb takes about 2 hours up and down."
+      image: "elephants.jpg"
+    - day: "3"
+      title: "Sigiriya → Kandy"
+      from: "Sigiriya"
+      to: "Kandy"
+      path: [sigiriya, kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 90
+      driveTime: "~3 h"
+      highlights: ["Spice garden", "Temple of the Tooth"]
+      description: "We drive south through Matale's spice gardens to Kandy, arriving for the evening ceremony at the Temple of the Tooth."
+      overnight: "Kandy"
+      tip: "Leave large bags in the van; the temple has a security check at the entrance."
+      image: "temple.jpg"
+    - day: "4"
+      title: "Kandy → Nuwara Eliya"
+      from: "Kandy"
+      to: "Nuwara Eliya"
+      path: [kandy, nuwara]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 77
+      driveTime: "~3 h"
+      highlights: ["Tea factory", "Ramboda Falls", "Gregory Lake"]
+      description: "A morning drive up into tea country with stops at waterfalls and a tea factory, then an afternoon around Gregory Lake."
+      overnight: "Nuwara Eliya"
+      tip: "Pack a warm layer; it gets cold in the evening."
+      image: "tea.jpg"
+    - day: "5"
+      title: "Nuwara Eliya → Airport"
+      from: "Nuwara Eliya"
+      to: "BIA"
+      path: [nuwara, kandy, bia]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 180
+      driveTime: "~5 h"
+      highlights: ["Hill-country views", "Kandy road"]
+      description: "We wind back down through the hills and past Kandy to the airport, with breaks whenever you want them."
+      overnight: ""
+      tip: "Plan to leave Nuwara Eliya at least 7 hours before an international flight."
+      image: "lake.jpg"
+
+- title: "9 Days Culture & East Coast"
+  slug: "9-days-culture-and-east-coast"
+  order: 5
+  days: 9
+  nights: 8
+  summary: "The summer route, for when the south coast gets monsoon rain: ancient cities, the great elephant gathering, and calm east-coast beaches at Trincomalee and Pasikudah."
+  start: "BIA"
+  end: "BIA"
+  totalDistanceKm: 910
+  bestMonths: "May–September — the east coast is dry and its sea calm while the southwest monsoon hits the west and south"
+  heroImage: "nilaveli.jpg"
+  mapStops:
+    - name: "Bandaranaike Airport (BIA)"
+    - name: "Dambulla"
+    - name: "Sigiriya"
+    - name: "Polonnaruwa"
+    - name: "Trincomalee"
+    - name: "Pasikudah"
+    - name: "Kandy"
+    - name: "Bandaranaike Airport (BIA)"
+  itinerary:
+    - day: "1"
+      title: "Airport → Sigiriya"
+      from: "BIA"
+      to: "Sigiriya"
+      path: [bia, dambulla, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 160
+      driveTime: "~4 h"
+      highlights: ["Dambulla cave temple"]
+      description: "I meet you at arrivals and we head north, stopping at the Dambulla cave temple. Evening free near Sigiriya."
+      overnight: "Sigiriya"
+      tip: "Cover shoulders and knees at Dambulla, and leave shoes at the entrance."
+      image: "sigiriya.jpg"
+    - day: "2"
+      title: "Sigiriya rock & elephant safari"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 60
+      driveTime: "~1.5 h"
+      highlights: ["Sigiriya rock", "Minneriya safari"]
+      description: "An early climb of Sigiriya, then an afternoon safari at Minneriya or Kaudulla, where hundreds of elephants gather in the dry season."
+      overnight: "Sigiriya"
+      tip: "The elephant gathering peaks in August and September; afternoon safaris see the biggest herds."
+      image: "elephants.jpg"
+    - day: "3"
+      title: "Polonnaruwa day trip"
+      from: "Sigiriya"
+      to: "Sigiriya"
+      path: [sigiriya, polonnaruwa, sigiriya]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 120
+      driveTime: "~3 h return"
+      highlights: ["Polonnaruwa ruins", "Gal Vihara"]
+      description: "We spend the day in the medieval capital of Polonnaruwa. I drive you between the ruins and you explore on foot or by bicycle."
+      overnight: "Sigiriya"
+      tip: "Start by 8 am; it is very hot by midday."
+      image: "polonnaruwa.jpg"
+    - day: "4"
+      title: "Sigiriya → Trincomalee"
+      from: "Sigiriya"
+      to: "Trincomalee"
+      path: [sigiriya, trinco]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 105
+      driveTime: "~3 h"
+      highlights: ["Koneswaram temple", "Marble Beach"]
+      description: "We drive east to Trincomalee, one of the world's great natural harbours. Afternoon at Koneswaram temple on its cliff, then the beach."
+      overnight: "Trincomalee"
+      tip: "Visit Koneswaram around 5 pm for sunset over the bay."
+      image: "nilaveli.jpg"
+    - day: "5"
+      title: "Pigeon Island & beaches"
+      from: "Trincomalee"
+      to: "Trincomalee"
+      path: [trinco]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 30
+      driveTime: "~1 h"
+      highlights: ["Pigeon Island snorkelling", "Nilaveli beach"]
+      description: "I drive you to Nilaveli for a boat to Pigeon Island, where you can snorkel among reef fish and small sharks. Afternoon free on the beach."
+      overnight: "Trincomalee"
+      tip: "Take the first boat of the morning for calmer water and fewer people at the reef."
+      image: "nilaveli.jpg"
+    - day: "6–7"
+      title: "Trincomalee → Pasikudah & beach day"
+      from: "Trincomalee"
+      to: "Pasikudah"
+      path: [trinco, pasikudah]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 110
+      driveTime: "~2.5 h"
+      highlights: ["Pasikudah lagoon", "Beach time"]
+      description: "We follow the coast south to Pasikudah, a long, shallow, calm bay. The next day is completely free for swimming and rest."
+      overnight: "Pasikudah"
+      tip: "The water stays shallow far out, which makes it ideal for families with children."
+    - day: "8"
+      title: "Pasikudah → Kandy"
+      from: "Pasikudah"
+      to: "Kandy"
+      path: [pasikudah, kandy]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 210
+      driveTime: "~5 h"
+      highlights: ["Cross-island drive", "Kandy Lake"]
+      description: "A long but scenic drive back across the island to Kandy, with stops whenever you want them. Evening by the lake."
+      overnight: "Kandy"
+      tip: "We leave around 8 am to reach Kandy before the late-afternoon traffic."
+      image: "lake.jpg"
+    - day: "9"
+      title: "Kandy → Airport"
+      from: "Kandy"
+      to: "BIA"
+      path: [kandy, bia]  # map stops for this day, see src/data/mapStops.ts
+      distanceKm: 115
+      driveTime: "~3 h"
+      highlights: ["Temple of the Tooth", "Peradeniya gardens"]
+      description: "Morning at the Temple of the Tooth or the Peradeniya gardens, then I drive you down to the airport."
+      overnight: ""
+      tip: "Leave Kandy at least 6 hours before an international flight."
+      image: "temple.jpg"

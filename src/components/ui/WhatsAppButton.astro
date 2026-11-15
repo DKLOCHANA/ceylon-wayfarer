@@ -1,0 +1,38 @@
+---
+import { site } from "@/config/site";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+import Button, { type ButtonSize, type ButtonVariant } from "./Button.astro";
+
+interface Props {
+  /** Prefilled message; name the route where relevant. */
+  message?: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  /** Show the chat icon (default true). */
+  icon?: boolean;
+  class?: string;
+}
+
+const {
+  message = site.messages.general,
+  variant = "primary",
+  size = "md",
+  fullWidth,
+  icon = true,
+  class: className,
+} = Astro.props;
+const hasLabel = Astro.slots.has("default");
+---
+
+<Button
+  href={buildWhatsAppLink(message)}
+  external
+  icon={icon ? "whatsapp" : undefined}
+  variant={variant}
+  size={size}
+  fullWidth={fullWidth}
+  class={className}
+>
+  {hasLabel ? <slot /> : site.ui.whatsappCta}
+</Button>

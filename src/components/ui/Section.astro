@@ -1,0 +1,59 @@
+---
+import Container from "./Container.astro";
+
+export type SectionTone = "ground" | "surface" | "ink";
+
+interface Props {
+  id?: string;
+  tone?: SectionTone;
+  bordered?: "none" | "top" | "bottom" | "both";
+  /** 112px vertical padding. */
+  padded?: boolean;
+  /** Wrap the content in a Container. Set false for full-bleed content. */
+  contained?: boolean;
+  /** Extra classes for the inner content wrapper (layout of the section's children). */
+  innerClass?: string;
+  class?: string;
+  ariaLabel?: string;
+}
+
+const {
+  id,
+  tone = "ground",
+  bordered = "none",
+  padded = true,
+  contained = true,
+  innerClass,
+  class: className,
+  ariaLabel,
+} = Astro.props;
+
+const tones: Record<SectionTone, string> = {
+  ground: "bg-ground text-ink",
+  surface: "bg-surface text-ink",
+  ink: "bg-ink text-ground tone-dark",
+};
+
+const borders = {
+  none: "",
+  top: "border-t border-line",
+  bottom: "border-b border-line",
+  both: "border-y border-line",
+};
+---
+
+<section
+  id={id}
+  aria-label={ariaLabel}
+  class:list={[tones[tone], borders[bordered], className]}
+>
+  {contained ? (
+    <Container class:list={[padded && "py-28", innerClass]}>
+      <slot />
+    </Container>
+  ) : (
+    <div class:list={[padded && "py-28", innerClass]}>
+      <slot />
+    </div>
+  )}
+</section>

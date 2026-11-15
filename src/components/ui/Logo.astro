@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import markColour from "@/assets/images/logo-mark.png";
+import markLight from "@/assets/images/logo-mark-light.png";
+
+interface Props {
+  /** Mark height in px (the island mark is taller than it is wide). */
+  size?: number;
+  /** Shows the wordmark next to the mark (Bricolage 800). */
+  wordmark?: string;
+  /** Wraps the logo in a link. */
+  href?: string;
+  /** Accessible name for the link. */
+  label?: string;
+  /** on-dark: cream + marigold mark for dark backgrounds. on-light: the original green + marigold mark. */
+  tone?: "on-dark" | "on-light";
+  class?: string;
+}
+
+const {
+  size = 40,
+  wordmark,
+  href,
+  label,
+  tone = "on-dark",
+  class: className,
+} = Astro.props;
+const Tag = href ? "a" : "span";
+const mark = tone === "on-dark" ? markLight : markColour;
+const width = Math.round((size * mark.width) / mark.height);
+---
+
+<Tag
+  href={href}
+  aria-label={href ? label : undefined}
+  class:list={[
+    "inline-flex items-center gap-2.5 text-current no-underline hover:text-current",
+    className,
+  ]}
+>
+  <Image
+    src={mark}
+    alt=""
+    width={width}
+    height={size}
+    densities={[1, 2, 3]}
+    loading="eager"
+    class="shrink-0"
+  />
+  {wordmark && (
+    <span class="font-display text-xl font-extrabold tracking-title">
+      {wordmark}
+    </span>
+  )}
+</Tag>

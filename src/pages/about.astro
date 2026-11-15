@@ -1,0 +1,23 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AboutHero from "@/components/sections/about/AboutHero.astro";
+import AboutStory from "@/components/sections/about/AboutStory.astro";
+import VanShowcase from "@/components/sections/about/VanShowcase.astro";
+import Promises from "@/components/sections/about/Promises.astro";
+import BookingCta from "@/components/sections/BookingCta.astro";
+import { site } from "@/config/site";
+import { about } from "@/data/about";
+import sunsetImage from "@/assets/images/sunset.jpg";
+---
+
+<BaseLayout
+  title={about.seo.title}
+  description={about.seo.description}
+  headerVariant="solid"
+>
+  <AboutHero {...about.hero} />
+  <AboutStory {...about.story} />
+  <VanShowcase {...about.van} />
+  <Promises {...about.promises} />
+  <BookingCta {...about.cta} image={sunsetImage} email={site.contact.email} />
+</BaseLayout>

@@ -1,0 +1,83 @@
+---
+import Icon from "./Icon.astro";
+
+export interface NavMenuItem {
+  label: string;
+  /** Small mono note on the right, e.g. "7 DAYS". */
+  meta?: string;
+  href: string;
+  current?: boolean;
+}
+
+/**
+ * Dropdown for the main nav, without JavaScript.
+ * The <details> is only the toggle; the menu is its sibling, because browsers don't paint
+ * anything inside a closed <details> (so hover could never reveal it there).
+ * Opens on tap (phones), Enter/Space (keyboard), hover (desktop) and while focus is inside.
+ */
+interface Props {
+  label: string;
+  items: NavMenuItem[];
+  /** Optional link at the bottom, e.g. "See all". */
+  footer?: { label: string; href: string };
+  /** Highlights the trigger when the visitor is inside this section. */
+  current?: boolean;
+}
+
+const { label, items, footer, current = false } = Astro.props;
+---
+
+<div class="group/menu relative">
+  <details class="peer/menu group/toggle">
+    <summary
+      class:list={[
+        "inline-flex min-h-11 cursor-pointer list-none items-center gap-1 hover:text-accent group-open/toggle:text-accent [&::-webkit-details-marker]:hidden",
+        current ? "text-accent" : "text-white",
+      ]}
+    >
+      {label}
+      <Icon
+        name="chevron-down"
+        size={16}
+        class="transition-transform duration-300 group-open/toggle:rotate-180 md:group-hover/menu:rotate-180"
+      />
+    </summary>
+  </details>
+
+  <!-- pt-2 bridges the gap so the menu stays open while the pointer moves onto it -->
+  <div
+    class="absolute top-full left-0 z-30 hidden w-64 pt-2 group-focus-within/menu:block peer-open/menu:block md:-left-4 md:w-72 md:group-hover/menu:block"
+  >
+    <ul class="m-0 flex list-none flex-col gap-0.5 rounded-card border border-white/10 bg-ink p-2 shadow-ticket">
+      {
+        items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={item.current ? "page" : undefined}
+              class="flex min-h-11 items-center justify-between gap-3 rounded-xl px-3 py-2 text-ui text-white no-underline transition-colors hover:bg-white/10 hover:text-white aria-[current=page]:bg-white/10 aria-[current=page]:text-accent"
+            >
+              <span>{item.label}</span>
+              {item.meta && (
+                <span class="shrink-0 font-mono text-tiny tracking-label-sm text-on-dark-muted">{item.meta}</span>
+              )}
+            </a>
+          </li>
+        ))
+      }
+      {
+        footer && (
+          <li class="mt-1 border-t border-white/10 pt-1">
+            <a
+              href={footer.href}
+              class="flex min-h-11 items-center justify-between gap-3 rounded-xl px-3 py-2 text-ui font-semibold text-accent no-underline transition-colors hover:bg-white/10 hover:text-accent"
+            >
+              {footer.label}
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </div>
+</div>

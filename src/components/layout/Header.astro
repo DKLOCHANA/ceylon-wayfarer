@@ -1,0 +1,82 @@
+---
+import { getCollection } from "astro:content";
+import { site } from "@/config/site";
+import { itineraryHref } from "@/lib/itinerary";
+import { stripBase, url } from "@/lib/url";
+import Container from "@/components/ui/Container.astro";
+import Logo from "@/components/ui/Logo.astro";
+import NavMenu, { type NavMenuItem } from "@/components/ui/NavMenu.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+
+interface Props {
+  /** overlay: frosted pill floating over the hero photo. solid: dark pill in normal flow (inner pages). */
+  variant?: "overlay" | "solid";
+}
+
+const { variant = "overlay" } = Astro.props;
+
+// Mark the link for the current page (hash links like /#faq never match a page path).
+const path = stripBase(Astro.url.pathname);
+// A section link (e.g. /itineraries) is also current on its sub-pages (/itineraries/7-days-…).
+const isCurrent = (href: string) =>
+  !href.includes("#") &&
+  href !== "/" &&
+  (path === href || path.startsWith(`${href}/`));
+
+// Dropdown under "Itineraries": every trip, shortest first.
+const itineraryItems: NavMenuItem[] = (await getCollection("itineraries"))
+  .sort((a, b) => a.data.days - b.data.days)
+  .map((entry) => {
+    const href = itineraryHref(entry.id);
+    return {
+      label: entry.data.title,
+      meta: `${entry.data.days} DAYS`,
+      href,
+      current: href === url(path),
+    };
+  });
+---
+
+<div
+  class:list={[
+    variant === "overlay"
+      ? "absolute inset-x-0 top-5 z-40 animate-drop"
+      : "relative z-40 animate-drop pt-5",
+  ]}
+>
+  <Container>
+    <header
+      class:list={[
+        "tone-dark flex flex-wrap items-center justify-between gap-3 rounded-3xl border py-2 pr-2 pl-4.5 text-white md:rounded-full",
+        variant === "overlay"
+          ? "border-white/18 bg-glass/38 backdrop-blur-nav"
+          : "border-transparent bg-ink",
+      ]}
+    >
+      <Logo href={url("/")} label={site.ui.homeLabel} wordmark={site.name} />
+      <nav
+        aria-label={site.ui.mainNavLabel}
+        class="flex flex-wrap items-center gap-x-6 gap-y-1 text-ui font-medium"
+      >
+        {site.nav.map((item) =>
+          "menu" in item ? (
+            <NavMenu
+              label={item.label}
+              items={itineraryItems}
+              current={isCurrent(item.href)}
+            />
+          ) : (
+            <a
+              href={url(item.href)}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+              class="inline-flex min-h-11 items-center text-white no-underline hover:text-accent aria-[current=page]:text-accent"
+            >
+              {item.label}
+            </a>
+          ),
+        )}
+        <WhatsAppButton size="sm" class="text-ui" />
+      </nav>
+    </header>
+  </Container>
+</div>

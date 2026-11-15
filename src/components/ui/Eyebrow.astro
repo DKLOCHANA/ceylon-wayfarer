@@ -1,0 +1,56 @@
+---
+import type { HTMLTag } from "astro/types";
+
+export type EyebrowTone = "muted" | "accent" | "on-dark" | "white" | "inherit";
+
+interface Props {
+  as?: HTMLTag;
+  tone?: EyebrowTone;
+  /** micro 10px · tiny 11px · xs 12px · caption 13px */
+  size?: "micro" | "tiny" | "xs" | "caption";
+  /** Letter-spacing: wide 0.14em · medium 0.12em · narrow 0.1em · none */
+  spacing?: "wide" | "medium" | "narrow" | "none";
+  class?: string;
+}
+
+const {
+  as: Tag = "p",
+  tone = "muted",
+  size = "caption",
+  spacing = "wide",
+  class: className,
+} = Astro.props;
+
+const tones: Record<EyebrowTone, string> = {
+  muted: "text-muted",
+  accent: "text-accent",
+  "on-dark": "text-on-dark-muted",
+  white: "text-white",
+  inherit: "",
+};
+
+const sizes = {
+  micro: "text-micro",
+  tiny: "text-tiny",
+  xs: "text-xs",
+  caption: "text-caption",
+};
+const spacings = {
+  wide: "tracking-label",
+  medium: "tracking-label-sm",
+  narrow: "tracking-label-xs",
+  none: "",
+};
+---
+
+<Tag
+  class:list={[
+    "m-0 font-mono uppercase",
+    tones[tone],
+    sizes[size],
+    spacings[spacing],
+    className,
+  ]}
+>
+  <slot />
+</Tag>

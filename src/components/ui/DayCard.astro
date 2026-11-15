@@ -1,0 +1,79 @@
+---
+import ChipList from "./ChipList.astro";
+import Icon from "./Icon.astro";
+import TipBox from "./TipBox.astro";
+
+/**
+ * One itinerary day as a native <details> accordion item (works without JS).
+ * Days sharing a `group` name open one at a time in modern browsers.
+ */
+interface Props {
+  index: number;
+  group: string;
+  open?: boolean;
+  dayLabel: string;
+  day: string;
+  title: string;
+  /** e.g. "160 KM · ≈ 4 H DRIVE" */
+  meta: string;
+  highlights: string[];
+  description: string;
+  tipLabel: string;
+  tip: string;
+  /** e.g. "OVERNIGHT · SIGIRIYA" or "FLY HOME" */
+  nightLabel: string;
+}
+
+const {
+  index,
+  group,
+  open = false,
+  dayLabel,
+  day,
+  title,
+  meta,
+  highlights,
+  description,
+  tipLabel,
+  tip,
+  nightLabel,
+} = Astro.props;
+---
+
+<details
+  name={group}
+  open={open}
+  data-day
+  data-i={index}
+  class="group overflow-hidden rounded-ticket border-[1.5px] border-line bg-ground transition-colors duration-300 open:border-primary open:bg-surface"
+>
+  <summary class="flex min-h-11 cursor-pointer list-none items-center gap-4 px-5 py-4.5 [&::-webkit-details-marker]:hidden">
+    <span class="flex h-13 min-w-13 shrink-0 flex-col items-center justify-center rounded-2xl bg-primary px-2 text-ground transition-colors duration-300 group-open:bg-accent group-open:text-ink">
+      <span class="font-mono text-nano tracking-label">{dayLabel}</span>
+      <span class="font-display text-lg leading-none font-extrabold">
+        {day}
+      </span>
+    </span>
+    <span class="flex min-w-0 grow flex-col gap-1">
+      <span class="font-display text-title-xs leading-title font-extrabold tracking-title">
+        {title}
+      </span>
+      <span class="font-mono text-xs tracking-meta text-muted">{meta}</span>
+    </span>
+    <Icon
+      name="chevron-down"
+      size={22}
+      class="text-primary transition-transform duration-300 group-open:rotate-180"
+    />
+  </summary>
+
+  <div class="flex flex-col gap-4 pr-5 pb-5.5 pl-5 sm:pl-22">
+    {highlights.length > 0 && <ChipList items={highlights} size="sm" />}
+    <p class="m-0 text-base leading-relaxed text-body">{description}</p>
+    <TipBox label={tipLabel} text={tip} />
+    <span class="inline-flex items-center gap-2 font-mono text-xs tracking-label-xs text-muted">
+      <Icon name="bed" size={16} />
+      {nightLabel}
+    </span>
+  </div>
+</details>

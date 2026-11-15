@@ -1,0 +1,54 @@
+---
+import type { WorkPromise } from "@/data/about";
+import { revealDelay } from "@/lib/motion";
+import Icon from "@/components/ui/Icon.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  items: WorkPromise[];
+}
+
+const { id = "promises", eyebrow, title, items } = Astro.props;
+---
+
+<!-- Dark band, three open columns split by hairlines (no cards). Stacks with horizontal rules on phones. -->
+<Section id={id} tone="ink" innerClass="flex flex-col gap-14">
+  <SectionHeading eyebrow={eyebrow} title={title} tone="dark" layout="stack" />
+
+  <ol class="m-0 grid list-none divide-y divide-white/15 border-y border-white/15 p-0 md:grid-cols-3 md:divide-x md:divide-y-0">
+    {items.map((item, i) => (
+      <li
+        class:list={[
+          "group reveal flex flex-col gap-5 py-10 md:px-8 md:py-12 md:first:pl-0 md:last:pr-0",
+          revealDelay(i),
+        ]}
+      >
+        <div class="flex items-center justify-between gap-4">
+          <span class="flex size-16 items-center justify-center rounded-full border-2 border-accent/50 text-accent transition duration-400 ease-zoom group-hover:scale-110 group-hover:border-accent group-hover:bg-accent group-hover:text-ink">
+            <Icon name={item.icon} size={28} draw />
+          </span>
+          <span
+            aria-hidden="true"
+            class="font-mono text-caption tracking-label text-on-dark-muted"
+          >
+            {String(i + 1).padStart(2, "0")}
+          </span>
+        </div>
+        <h3 class="m-0 font-display text-title leading-tile font-extrabold tracking-title md:text-3xl">
+          {item.title}
+        </h3>
+        <p class="m-0 text-base leading-relaxed text-on-dark-body">
+          {item.text}
+        </p>
+        <span
+          aria-hidden="true"
+          class="draw-in mt-auto block h-1 w-12 rounded-full bg-accent"
+        />
+      </li>
+    ))}
+  </ol>
+</Section>

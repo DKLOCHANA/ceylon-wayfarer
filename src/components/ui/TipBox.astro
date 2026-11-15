@@ -1,0 +1,24 @@
+---
+import Icon from "./Icon.astro";
+
+/** Warm call-out with a bulb icon, e.g. "Tip: be at the gate when it opens." */
+interface Props {
+  label: string;
+  text: string;
+  class?: string;
+}
+
+const { label, text, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex items-start gap-3 rounded-2xl border border-tip-line bg-tip px-4 py-3.5",
+    className,
+  ]}
+>
+  <Icon name="bulb" size={20} class="mt-px text-tip-icon" />
+  <p class="m-0 text-ui leading-copy text-tip-text">
+    <strong class="font-semibold">{label}</strong>{" "}{text}
+  </p>
+</div>

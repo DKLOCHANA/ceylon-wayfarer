@@ -1,0 +1,56 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  /** x: left → right (desktop row). y: top → bottom (stacked on phones). */
+  direction: "x" | "y";
+  /** Position in the sequence; each step starts its arrow half a cycle after the previous one. */
+  step?: number;
+  /** Positioning/visibility classes from the parent. */
+  class?: string;
+}
+
+const { direction, step = 0, class: className } = Astro.props;
+
+// Static class names so Tailwind can find them.
+const stepDelays = [
+  "flow-step-0",
+  "flow-step-1",
+  "flow-step-2",
+  "flow-step-3",
+] as const;
+const delay = stepDelays[step % stepDelays.length];
+const isX = direction === "x";
+---
+
+<div
+  aria-hidden="true"
+  class:list={["pointer-events-none absolute overflow-hidden", className]}
+>
+  <span
+    class:list={[
+      "absolute",
+      isX
+        ? "inset-x-0 top-1/2 h-0.5 -translate-y-1/2 flow-dash-x"
+        : "inset-y-0 left-1/2 w-0.5 -translate-x-1/2 flow-dash-y",
+    ]}
+  ></span>
+  <span
+    class:list={[
+      "absolute inset-0",
+      isX ? "flow-travel-x" : "flow-travel-y",
+      delay,
+    ]}
+  >
+    <span
+      class:list={[
+        "absolute flex size-7 items-center justify-center rounded-full bg-accent text-ink ring-3 ring-surface",
+        isX
+          ? "top-1/2 right-0 -translate-y-1/2"
+          : "bottom-0 left-1/2 -translate-x-1/2 rotate-90",
+      ]}
+    >
+      <Icon name="arrow-right" size={14} />
+    </span>
+  </span>
+</div>

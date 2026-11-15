@@ -1,0 +1,65 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import Icon, { type IconName } from "./Icon.astro";
+
+export type ButtonVariant = "primary" | "dark" | "outline" | "ghost-on-photo";
+export type ButtonSize = "sm" | "md" | "lg";
+
+interface Props extends Omit<HTMLAttributes<"a">, "class" | "type"> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  /** Renders an <a> when set, otherwise a <button>. */
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  icon?: IconName;
+  /** Opens in a new tab with rel="noopener". */
+  external?: boolean;
+  fullWidth?: boolean;
+  class?: string;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  href,
+  type = "button",
+  icon,
+  external = false,
+  fullWidth = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const variants: Record<ButtonVariant, string> = {
+  primary: "bg-accent text-ink hover:bg-accent/90 hover:text-ink",
+  dark: "bg-ink text-ground hover:bg-primary hover:text-ground",
+  outline:
+    "border-[1.5px] border-ink/40 text-ink hover:border-ink hover:text-ink",
+  "ghost-on-photo":
+    "border-[1.5px] border-white/60 text-white backdrop-blur-sm hover:bg-white/10 hover:text-white",
+};
+
+const sizes: Record<ButtonSize, { box: string; icon: number }> = {
+  sm: { box: "min-h-11 gap-2 px-5 text-sm", icon: 18 },
+  md: { box: "min-h-13 gap-2.5 px-6 text-base", icon: 18 },
+  lg: { box: "min-h-15 gap-2.5 px-8 text-lg", icon: 22 },
+};
+
+const classes = [
+  "inline-flex items-center justify-center rounded-full font-semibold no-underline transition duration-300 ease-zoom hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:shadow-none",
+  variants[variant],
+  sizes[size].box,
+  fullWidth && "w-full",
+  className,
+];
+
+const Tag = href ? "a" : "button";
+const linkAttrs = href
+  ? { href, ...(external ? { target: "_blank", rel: "noopener" } : {}) }
+  : { type };
+---
+
+<Tag class:list={classes} {...linkAttrs} {...rest}>
+  {icon && <Icon name={icon} size={sizes[size].icon} />}
+  <slot />
+</Tag>

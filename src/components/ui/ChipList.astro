@@ -1,0 +1,33 @@
+---
+import { revealDelay } from "@/lib/motion";
+import Chip from "./Chip.astro";
+
+/** A wrapping row of light chips that pop in one after another. */
+interface Props {
+  items: readonly string[];
+  size?: "sm" | "md";
+  class?: string;
+}
+
+const { items, size = "md", class: className } = Astro.props;
+---
+
+<ul
+  class:list={[
+    size === "sm"
+      ? "m-0 flex list-none flex-wrap gap-2 p-0"
+      : "m-0 flex list-none flex-wrap gap-2.5 p-0",
+    className,
+  ]}
+>
+  {items.map((item, i) => (
+    <Chip
+      as="li"
+      variant="light"
+      size={size}
+      class:list={["reveal-zoom", revealDelay(i)]}
+    >
+      {item}
+    </Chip>
+  ))}
+</ul>

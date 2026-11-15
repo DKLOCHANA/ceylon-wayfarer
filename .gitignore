@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.DS_Store
+.env*
+
+# Local stand-in hero video (not licensed for publishing): never commit or deploy
+public/videos/hero-placeholder*
+
+# Third-party advert (not licensed for publishing): keep out of the repository
+src/assets/images/hero-video.mp4

@@ -1,0 +1,80 @@
+---
+import type { ImageMetadata } from "astro";
+import ChipList from "@/components/ui/ChipList.astro";
+import PhotoOrPlaceholder from "@/components/ui/PhotoOrPlaceholder.astro";
+import Section from "@/components/ui/Section.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+
+interface Photo {
+  image: ImageMetadata;
+  alt: string;
+}
+
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title: string;
+  bio: string;
+  chips: readonly string[];
+  /** The honest note about guides at major sites. */
+  note: string;
+  /** Real photos; a labelled placeholder shows until each is supplied. */
+  ownerPhoto?: Photo;
+  vanPhoto?: Photo;
+  ownerPlaceholder: string;
+  vanPlaceholder: string;
+}
+
+const {
+  id = "driver",
+  eyebrow,
+  title,
+  bio,
+  chips,
+  note,
+  ownerPhoto,
+  vanPhoto,
+  ownerPlaceholder,
+  vanPlaceholder,
+} = Astro.props;
+---
+
+<Section id={id} innerClass="flex flex-wrap items-center gap-16">
+  <div class="reveal-side relative box-border min-w-0 grow basis-90 pr-10 pb-10">
+    <PhotoOrPlaceholder
+      image={ownerPhoto?.image}
+      alt={ownerPhoto?.alt}
+      placeholder={ownerPlaceholder}
+      widths={[480, 720, 960]}
+      sizes="(min-width: 1024px) 620px, 100vw"
+      class="aspect-4/5 w-full rounded-stage"
+    />
+    <div class="absolute right-0 bottom-0 aspect-4/3 w-14/25 animate-float rounded-ticket border-6 border-ground bg-primary">
+      <PhotoOrPlaceholder
+        image={vanPhoto?.image}
+        alt={vanPhoto?.alt}
+        placeholder={vanPlaceholder}
+        placeholderTone="dark"
+        widths={[320, 480, 640, 960]}
+        sizes="(min-width: 1024px) 300px, 56vw"
+        class="size-full rounded-card"
+      />
+    </div>
+  </div>
+
+  <div class="flex min-w-0 grow basis-105 flex-col gap-6">
+    <SectionHeading
+      eyebrow={eyebrow}
+      title={title}
+      layout="stack"
+      titleWidth="none"
+      size="h2-xl"
+      class="gap-6"
+    />
+    <p class="reveal m-0 text-lead leading-relaxed text-body">{bio}</p>
+    <ChipList items={chips} />
+    <p class="reveal m-0 border-t border-line pt-4 text-ui leading-relaxed text-muted">
+      {note}
+    </p>
+  </div>
+</Section>

@@ -1,0 +1,30 @@
+---
+/** Label/value pairs (mono labels, e.g. on a ticket or spec block). */
+export interface DataRow {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  rows: DataRow[];
+  class?: string;
+}
+
+const { rows, class: className } = Astro.props;
+---
+
+<dl
+  class:list={[
+    "m-0 grid grid-cols-[auto_1fr] items-baseline gap-x-3.5 gap-y-1.5",
+    className,
+  ]}
+>
+  {rows.map((row) => (
+    <>
+      <dt class="font-mono text-tiny tracking-label-sm text-muted uppercase">
+        {row.label}
+      </dt>
+      <dd class="m-0 text-sm">{row.value}</dd>
+    </>
+  ))}
+</dl>

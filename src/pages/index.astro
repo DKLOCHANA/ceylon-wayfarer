@@ -1,0 +1,68 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/sections/Hero.astro";
+import DestinationMarquee from "@/components/sections/DestinationMarquee.astro";
+import RoutePicker from "@/components/sections/RoutePicker.astro";
+import IslandGallery from "@/components/sections/IslandGallery.astro";
+import DriverIntro from "@/components/sections/DriverIntro.astro";
+import HowItWorks from "@/components/sections/HowItWorks.astro";
+import Reviews from "@/components/sections/Reviews.astro";
+import Faq from "@/components/sections/Faq.astro";
+import BookingCta from "@/components/sections/BookingCta.astro";
+import { site } from "@/config/site";
+import { home } from "@/data/home";
+import { destinations } from "@/data/destinations";
+import { gallery } from "@/data/gallery";
+import { steps } from "@/data/howItWorks";
+import { reviews } from "@/data/reviews";
+import { faq } from "@/data/faq";
+import { routePrice } from "@/lib/format";
+import heroImage from "@/assets/images/hero.jpg";
+import sunsetImage from "@/assets/images/sunset.jpg";
+
+const routes = (await getCollection("routes"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 5);
+
+const ticketRoute = await getEntry("routes", home.hero.ticket.routeId);
+if (!ticketRoute)
+  throw new Error(
+    `Hero ticket route "${home.hero.ticket.routeId}" not found in src/content/routes`,
+  );
+
+const googleReviews = site.socials.find(
+  (s) => s.label === "Google reviews",
+)?.url;
+---
+
+<BaseLayout
+  title={home.seo.title}
+  description={home.seo.description}
+  headerVariant="overlay"
+  ogImageAlt={home.hero.imageAlt}
+  businessSchema
+>
+  <Hero
+    image={heroImage}
+    imageAlt={home.hero.imageAlt}
+    eyebrow={home.hero.eyebrow}
+    headline={home.hero.headline}
+    headlineAccent={home.hero.headlineAccent}
+    lead={home.hero.lead}
+    video={home.hero.video}
+    ticket={{
+      ...home.hero.ticket,
+      fare: routePrice(ticketRoute.data),
+      message: site.messages.route(ticketRoute.data.title),
+    }}
+  />
+  <DestinationMarquee places={destinations} label={home.marquee.label} />
+  <RoutePicker {...home.routes} routes={routes} />
+  <IslandGallery {...home.island} tiles={gallery} />
+  <DriverIntro {...home.driver} bio={site.owner.bio} />
+  <HowItWorks {...home.how} steps={steps} />
+  <Reviews {...home.reviews} reviews={reviews} reviewsUrl={googleReviews} />
+  <Faq {...home.faq} items={faq} />
+  <BookingCta {...home.cta} image={sunsetImage} email={site.contact.email} />
+</BaseLayout>
