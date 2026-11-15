@@ -23,6 +23,8 @@ const {
   class: className,
 } = Astro.props;
 const hasLabel = Astro.slots.has("default");
+// size="icon" shows only the chat icon, so the label moves to aria-label.
+const iconOnly = size === "icon";
 ---
 
 <Button
@@ -33,6 +35,7 @@ const hasLabel = Astro.slots.has("default");
   size={size}
   fullWidth={fullWidth}
   class={className}
+  aria-label={iconOnly ? site.ui.whatsappCta : undefined}
 >
-  {hasLabel ? <slot /> : site.ui.whatsappCta}
+  {!iconOnly && (hasLabel ? <slot /> : site.ui.whatsappCta)}
 </Button>

@@ -91,6 +91,9 @@ export const site = {
     homeLabel: "Ceylon Wayfarer home",
     mainNavLabel: "Main",
     socialNavLabel: "Social",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    menuLabel: "Menu",
   },
 } as const;
 

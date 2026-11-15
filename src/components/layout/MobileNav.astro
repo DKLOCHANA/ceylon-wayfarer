@@ -1,0 +1,100 @@
+---
+import { site } from "@/config/site";
+import { url } from "@/lib/url";
+import Eyebrow from "@/components/ui/Eyebrow.astro";
+import Icon from "@/components/ui/Icon.astro";
+import Logo from "@/components/ui/Logo.astro";
+import WhatsAppButton from "@/components/ui/WhatsAppButton.astro";
+import type { NavMenuItem } from "@/components/ui/NavMenu.astro";
+
+/**
+ * Phone navigation: a menu button that opens a drawer from the right.
+ * Uses the native popover API — no JavaScript; Esc, tapping outside and the close button all close it.
+ */
+interface Props {
+  /** Top-level links ("About"). */
+  links: { label: string; href: string; current: boolean }[];
+  /** Grouped links shown as a list (the itineraries). */
+  group: { label: string; items: NavMenuItem[] };
+  class?: string;
+}
+
+const { links, group, class: className } = Astro.props;
+const drawerId = "mobile-nav";
+---
+
+<div class:list={["flex items-center gap-2", className]}>
+  <WhatsAppButton size="icon" />
+  <button
+    type="button"
+    popovertarget={drawerId}
+    aria-label={site.ui.openMenu}
+    class="flex size-11 cursor-pointer items-center justify-center rounded-full border border-white/25 text-white transition hover:bg-white/10"
+  >
+    <Icon name="menu" size={22} />
+  </button>
+</div>
+
+<nav
+  id={drawerId}
+  popover
+  aria-label={site.ui.mainNavLabel}
+  class="tone-dark fixed inset-y-0 right-0 left-auto m-0 flex h-dvh max-h-none w-full max-w-88 translate-x-full flex-col overflow-y-auto border-0 bg-ink p-0 text-white opacity-0 shadow-ticket transition-all transition-discrete duration-300 ease-zoom backdrop:bg-scrim/0 backdrop:transition-all backdrop:transition-discrete backdrop:duration-300 open:translate-x-0 open:opacity-100 open:backdrop:bg-scrim/60 starting:open:translate-x-full starting:open:opacity-0 starting:open:backdrop:bg-scrim/0"
+>
+  <div class="flex items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
+    <Logo href={url("/")} label={site.ui.homeLabel} wordmark={site.name} />
+    <button
+      type="button"
+      popovertarget={drawerId}
+      popovertargetaction="hide"
+      aria-label={site.ui.closeMenu}
+      class="flex size-11 cursor-pointer items-center justify-center rounded-full text-white transition hover:bg-white/10"
+    >
+      <Icon name="close" size={22} />
+    </button>
+  </div>
+
+  <div class="flex grow flex-col gap-6 px-5 py-6">
+    <section class="flex flex-col gap-2">
+      <Eyebrow as="h2" size="tiny" tone="accent">
+        {group.label}
+      </Eyebrow>
+      <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+        {group.items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={item.current ? "page" : undefined}
+              class="flex min-h-12 items-center justify-between gap-3 rounded-xl px-3 py-2 text-base text-white no-underline transition-colors hover:bg-white/10 hover:text-white aria-[current=page]:bg-white/10 aria-[current=page]:text-accent"
+            >
+              <span>{item.label}</span>
+              {item.meta && (
+                <span class="shrink-0 font-mono text-tiny tracking-label-sm text-on-dark-muted">
+                  {item.meta}
+                </span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <ul class="m-0 flex list-none flex-col gap-0.5 border-t border-white/10 p-0 pt-4">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            aria-current={link.current ? "page" : undefined}
+            class="flex min-h-12 items-center rounded-xl px-3 font-display text-title-xs font-extrabold tracking-title text-white no-underline transition-colors hover:bg-white/10 hover:text-white aria-[current=page]:text-accent"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="border-t border-white/10 px-5 py-5">
+    <WhatsAppButton fullWidth />
+  </div>
+</nav>

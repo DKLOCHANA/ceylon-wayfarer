@@ -12,7 +12,9 @@ export type IconName =
   | "chevron-left"
   | "chevron-right"
   | "bulb"
-  | "bed";
+  | "bed"
+  | "menu"
+  | "close";
 
 interface Props {
   name: IconName;
@@ -94,6 +96,14 @@ const icons: Record<IconName, IconDef> = {
         d: "M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z",
       },
     ],
+  },
+  menu: {
+    viewBox: [24, 24],
+    paths: [{ d: "M4 7h16" }, { d: "M4 12h16" }, { d: "M4 17h10" }],
+  },
+  close: {
+    viewBox: [24, 24],
+    paths: [{ d: "M6 6l12 12" }, { d: "M18 6L6 18" }],
   },
   /** Bed: overnight stop. */
   bed: {
