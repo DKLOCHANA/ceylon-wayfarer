@@ -83,10 +83,11 @@ const {
       <p class="enter-2 m-0 text-lead leading-relaxed text-body">{bio}</p>
       <ChipList items={chips} />
       <div class="enter-3 flex flex-wrap gap-3">
-        <WhatsAppButton>{whatsappLabel}</WhatsAppButton>
+        <!-- WhatsApp (the main action) comes last, so on phones it sits below everything else. -->
         <Button href={url(secondaryCta.href)} variant="outline">
           {secondaryCta.label}
         </Button>
+        <WhatsAppButton>{whatsappLabel}</WhatsAppButton>
       </div>
     </div>
   </Container>
