@@ -4,6 +4,7 @@ code: BIA → KDY
 tag: AIRPORT TRANSFER
 duration: ≈ 3 H
 distanceKm: 105  # Airport → Kandy, one way
+priceFrom: 100  # fixed price in USD (overrides the per-km calculation)
 priceLabel: FROM, WHOLE VAN
 image: ../../assets/images/lake.jpg
 imageAlt: Kandy Lake in the centre of Kandy

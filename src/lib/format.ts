@@ -48,15 +48,15 @@ export function rateText(): string {
   return `${fmt(Math.round(perDayMultiDay / lkrPerUsd), 0)}/day + ${fmt(perKm / lkrPerUsd, 2)}/km`;
 }
 
-/** Display price for a route: calculated from its distance, a fixed price, or the rate. */
+/** Display price for a route: a fixed priceFrom (USD) wins, else calculated from distance, else the rate. */
 export function routePrice(route: {
   distanceKm?: number | undefined;
   days?: number | undefined;
   priceFrom?: number | string | undefined;
 }): string {
+  if (route.priceFrom !== undefined) return formatPrice(route.priceFrom);
   if (route.distanceKm !== undefined)
     return formatPrice(tripPrice(route.distanceKm, route.days));
-  if (route.priceFrom !== undefined) return formatPrice(route.priceFrom);
   return rateText();
 }
 

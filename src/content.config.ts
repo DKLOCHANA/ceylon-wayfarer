@@ -18,7 +18,7 @@ const routes = defineCollection({
       distanceKm: z.number().positive().optional(),
       /** Days the trip lasts (default 1). Multi-day trips add the daily charge. */
       days: z.number().int().positive().optional(),
-      /** Fixed price or rate text, used only when there's no distanceKm (e.g. the per-day island loop). */
+      /** Fixed price in USD (or text). Overrides the price calculated from distanceKm. */
       priceFrom: z.union([z.number().positive(), z.string()]).optional(),
       /** e.g. "FROM, WHOLE VAN", "PER DAY". */
       priceLabel: z.string(),
