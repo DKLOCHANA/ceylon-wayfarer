@@ -11,7 +11,7 @@ import Reviews from "@/components/sections/Reviews.astro";
 import Faq from "@/components/sections/Faq.astro";
 import BookingCta from "@/components/sections/BookingCta.astro";
 import { site } from "@/config/site";
-import { home } from "@/data/home";
+import { home, showReviews } from "@/data/home";
 import { destinations } from "@/data/destinations";
 import { gallery } from "@/data/gallery";
 import { steps } from "@/data/howItWorks";
@@ -62,7 +62,9 @@ const googleReviews = site.socials.find(
   <IslandGallery {...home.island} tiles={gallery} />
   <DriverIntro {...home.driver} bio={site.owner.bio} />
   <HowItWorks {...home.how} steps={steps} />
-  <Reviews {...home.reviews} reviews={reviews} reviewsUrl={googleReviews} />
+  {showReviews && (
+    <Reviews {...home.reviews} reviews={reviews} reviewsUrl={googleReviews} />
+  )}
   <Faq {...home.faq} items={faq} />
   <BookingCta {...home.cta} image={sunsetImage} email={site.contact.email} />
 </BaseLayout>

@@ -1,6 +1,10 @@
 import { site } from "@/config/site";
 import { existsSync } from "node:fs";
 import { driver } from "@/data/driver";
+import { reviews } from "@/data/reviews";
+
+/** The Reviews section shows only once there are real reviews; later sections renumber to match. */
+export const showReviews = reviews.length > 0;
 
 /** Home page copy, section by section. */
 export const home = {
@@ -74,7 +78,7 @@ export const home = {
       "This is a new website, so reviews from guests will appear here soon. Ask me anything on WhatsApp in the meantime.",
   },
   faq: {
-    eyebrow: "06 — QUESTIONS",
+    eyebrow: `${showReviews ? "06" : "05"} — QUESTIONS`,
     title: "Good to know.",
   },
   cta: {
